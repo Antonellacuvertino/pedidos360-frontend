@@ -1,0 +1,41 @@
+<main class="login-page">
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">
+        <svg lucideShieldCheck size="18"></svg>
+        Azure AD + AWS API Gateway
+      </span>
+      <h1>Pedidos360</h1>
+      <p>
+        Panel base para revisar pedidos, clientes y productos con autenticacion centralizada y backend protegido por JWT.
+      </p>
+      <div class="actions">
+        <button type="button" class="primary" (click)="ingresar()" *ngIf="!autenticado">
+          <span class="microsoft-mark" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          Iniciar sesion con Microsoft
+        </button>
+        <button type="button" class="primary" (click)="irDashboard()" *ngIf="autenticado">
+          <svg lucideLayoutDashboard size="18"></svg>
+          Ir al dashboard
+        </button>
+      </div>
+    </div>
+    <div class="system-panel" aria-label="Arquitectura Pedidos360">
+      <div class="node user">Frontend Angular</div>
+      <div class="line"></div>
+      <div class="node gateway">API Gateway</div>
+      <div class="line"></div>
+      <div class="node bff">BFF Spring Boot</div>
+      <div class="services">
+        <span>Productos</span>
+        <span>Clientes</span>
+        <span>Pedidos</span>
+      </div>
+    </div>
+  </section>
+</main>

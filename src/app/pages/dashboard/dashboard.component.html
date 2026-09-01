@@ -1,0 +1,106 @@
+<main class="dashboard">
+  <header class="page-header">
+    <div>
+      <span class="section-label">Pedidos360</span>
+      <h1>Dashboard</h1>
+      <p>Resumen de pedidos, catalogo y clientes consumido desde el API Gateway.</p>
+    </div>
+    <button type="button" class="ghost" (click)="cargarDatos()" title="Actualizar datos">
+      <svg lucideRefreshCw size="18"></svg>
+      Actualizar
+    </button>
+  </header>
+
+  <section class="metrics" *ngIf="resumen">
+    <article>
+      <svg lucideShoppingCart size="22"></svg>
+      <span>Pedidos</span>
+      <strong>{{ resumen.totalPedidos }}</strong>
+    </article>
+    <article>
+      <svg lucidePackage size="22"></svg>
+      <span>Productos</span>
+      <strong>{{ resumen.totalProductos }}</strong>
+    </article>
+    <article>
+      <svg lucideUsers size="22"></svg>
+      <span>Clientes</span>
+      <strong>{{ resumen.totalClientes }}</strong>
+    </article>
+    <article>
+      <svg lucideLayoutDashboard size="22"></svg>
+      <span>Venta total</span>
+      <strong>{{ resumen.ventaTotal | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
+    </article>
+  </section>
+
+  <p class="alert" *ngIf="error">{{ error }}</p>
+  <p class="loading" *ngIf="cargando">Cargando informacion desde API Gateway...</p>
+
+  <section class="content-grid">
+    <div class="panel wide">
+      <div class="panel-title">
+        <h2>Pedidos recientes</h2>
+        <span>{{ pedidos.length }} registros</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pedido of pedidos">
+              <td>#{{ pedido.id }}</td>
+              <td>{{ obtenerCliente(pedido.clienteId) }}</td>
+              <td>{{ obtenerProducto(pedido.productoId) }}</td>
+              <td>{{ pedido.cantidad }}</td>
+              <td>{{ pedido.total | currency: 'CLP':'symbol-narrow':'1.0-0' }}</td>
+              <td><span class="status">{{ pedido.estado }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="catalog-grid">
+    <div class="panel">
+      <div class="panel-title">
+        <h2>Productos</h2>
+        <span>Catalogo</span>
+      </div>
+      <ul class="list">
+        <li *ngFor="let producto of productos">
+          <div>
+            <strong>{{ producto.nombre }}</strong>
+            <small>{{ producto.categoria }}</small>
+          </div>
+          <span>{{ producto.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">
+        <h2>Clientes</h2>
+        <span>Base comercial</span>
+      </div>
+      <ul class="list">
+        <li *ngFor="let cliente of clientes">
+          <div>
+            <strong>{{ cliente.nombre }}</strong>
+            <small>{{ cliente.email }}</small>
+          </div>
+          <span>{{ cliente.segmento }}</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>

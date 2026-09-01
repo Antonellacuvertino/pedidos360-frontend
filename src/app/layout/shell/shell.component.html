@@ -1,0 +1,46 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">P360</span>
+      <div>
+        <strong>Pedidos360</strong>
+        <small>Cloud Native</small>
+      </div>
+    </div>
+
+    <nav>
+      <a routerLink="/app/dashboard" routerLinkActive="active">
+        <svg lucideLayoutDashboard size="18"></svg>
+        Dashboard
+      </a>
+      <a routerLink="/app/productos" routerLinkActive="active">
+        <svg lucidePackage size="18"></svg>
+        Productos
+      </a>
+      <a routerLink="/app/carrito" routerLinkActive="active">
+        <svg lucideShoppingCart size="18"></svg>
+        Carrito
+        <span class="badge" *ngIf="(items$ | async)?.length">{{ (items$ | async)?.length }}</span>
+      </a>
+      <a routerLink="/app/cuenta" routerLinkActive="active">
+        <svg lucideUsers size="18"></svg>
+        Mi cuenta
+      </a>
+    </nav>
+  </aside>
+
+  <section class="main-area">
+    <header class="topbar">
+      <div>
+        <span>Sesion Microsoft activa</span>
+        <strong>{{ usuario }}</strong>
+      </div>
+      <button type="button" (click)="salir()">
+        <svg lucideLogOut size="18"></svg>
+        Salir
+      </button>
+    </header>
+
+    <router-outlet></router-outlet>
+  </section>
+</div>

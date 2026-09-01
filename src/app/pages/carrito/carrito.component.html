@@ -1,0 +1,73 @@
+<main class="carrito-page">
+  <header class="page-header">
+    <div>
+      <span class="section-label">Venta</span>
+      <h1>Carrito</h1>
+      <p>Confirma productos seleccionados y genera pedidos protegidos por JWT.</p>
+    </div>
+  </header>
+
+  <p class="alert" *ngIf="error">{{ error }}</p>
+  <p class="success" *ngIf="mensaje">{{ mensaje }}</p>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="panel-title">
+        <h2>Productos seleccionados</h2>
+        <span>{{ items.length }} item(s)</span>
+      </div>
+
+      <div class="empty" *ngIf="items.length === 0">
+        <svg lucideShoppingCart size="32"></svg>
+        <strong>El carrito esta vacio</strong>
+        <span>Agrega productos desde la pantalla de catalogo.</span>
+      </div>
+
+      <article class="cart-item" *ngFor="let item of items">
+        <div>
+          <strong>{{ item.producto.nombre }}</strong>
+          <span>{{ item.producto.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }} c/u</span>
+        </div>
+        <div class="quantity">
+          <button type="button" class="icon" (click)="disminuir(item)">
+            <svg lucideMinus size="16"></svg>
+          </button>
+          <strong>{{ item.cantidad }}</strong>
+          <button type="button" class="icon" (click)="aumentar(item)">
+            <svg lucidePlus size="16"></svg>
+          </button>
+        </div>
+        <strong>{{ item.producto.precio * item.cantidad | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
+        <button type="button" class="delete" (click)="quitar(item)">
+          <svg lucideTrash2 size="17"></svg>
+        </button>
+      </article>
+    </div>
+
+    <aside class="panel summary">
+      <div class="panel-title">
+        <h2>Resumen</h2>
+        <span>POST /pedidos</span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="confirmarPedido()">
+        <label>
+          Cliente
+          <select formControlName="clienteId">
+            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }}</option>
+          </select>
+        </label>
+
+        <div class="total-row">
+          <span>Total</span>
+          <strong>{{ total() | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
+        </div>
+
+        <button type="submit" class="primary" [disabled]="items.length === 0 || enviando">
+          <svg lucideShoppingCart size="18"></svg>
+          Confirmar pedido
+        </button>
+      </form>
+    </aside>
+  </section>
+</main>

@@ -1,0 +1,74 @@
+<main class="productos-page">
+  <header class="page-header">
+    <div>
+      <span class="section-label">Catalogo</span>
+      <h1>Productos</h1>
+      <p>Consulta productos por GET y agrega productos al carrito para generar pedidos.</p>
+    </div>
+    <button type="button" class="ghost" (click)="cargarProductos()">
+      <svg lucideRefreshCw size="18"></svg>
+      Actualizar
+    </button>
+  </header>
+
+  <p class="alert" *ngIf="error">{{ error }}</p>
+  <p class="success" *ngIf="mensaje">{{ mensaje }}</p>
+  <p class="loading" *ngIf="cargando">Cargando productos...</p>
+
+  <section class="grid">
+    <div class="catalog">
+      <article class="product-card" *ngFor="let producto of productos">
+        <div class="product-icon">
+          <svg lucidePackage size="24"></svg>
+        </div>
+        <div class="product-info">
+          <span>{{ producto.categoria }}</span>
+          <h2>{{ producto.nombre }}</h2>
+          <p>Stock disponible: {{ producto.stock }}</p>
+        </div>
+        <div class="product-actions">
+          <strong>{{ producto.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
+          <button type="button" class="primary" (click)="agregarAlCarrito(producto)">
+            <svg lucideShoppingCart size="18"></svg>
+            Agregar
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <aside class="panel">
+      <div class="panel-title">
+        <h2>Nuevo producto</h2>
+        <span>POST protegido</span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="crearProducto()">
+        <label>
+          Nombre
+          <input type="text" formControlName="nombre" placeholder="Ej: Audifonos USB-C">
+        </label>
+        <label>
+          Categoria
+          <select formControlName="categoria">
+            <option value="Computacion">Computacion</option>
+            <option value="Perifericos">Perifericos</option>
+            <option value="Accesorios">Accesorios</option>
+            <option value="Redes">Redes</option>
+          </select>
+        </label>
+        <label>
+          Precio
+          <input type="number" min="1" formControlName="precio">
+        </label>
+        <label>
+          Stock
+          <input type="number" min="0" formControlName="stock">
+        </label>
+        <button type="submit" class="primary">
+          <svg lucidePlus size="18"></svg>
+          Guardar producto
+        </button>
+      </form>
+    </aside>
+  </section>
+</main>

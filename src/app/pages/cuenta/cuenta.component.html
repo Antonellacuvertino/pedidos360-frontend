@@ -1,0 +1,103 @@
+<main class="cuenta-page">
+  <header class="page-header">
+    <div>
+      <span class="section-label">OAuth 2.0 / OpenID Connect</span>
+      <h1>Mi cuenta</h1>
+      <p>Datos recibidos desde Microsoft Entra ID y token usado para consumir el API Gateway.</p>
+    </div>
+    <button type="button" class="ghost" (click)="cargarToken()">
+      <svg lucideRefreshCw size="18"></svg>
+      Renovar token
+    </button>
+  </header>
+
+  <p class="alert" *ngIf="error">{{ error }}</p>
+  <p class="success" *ngIf="copiado">Token copiado para usar en Postman.</p>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="panel-title">
+        <h2>Usuario autenticado</h2>
+        <svg lucideUsers size="22"></svg>
+      </div>
+      <dl>
+        <div>
+          <dt>Nombre</dt>
+          <dd>{{ cuenta?.name || 'No informado' }}</dd>
+        </div>
+        <div>
+          <dt>Correo / username</dt>
+          <dd>{{ cuenta?.username || 'No informado' }}</dd>
+        </div>
+        <div>
+          <dt>Tenant ID</dt>
+          <dd>{{ claim('tid') }}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">
+        <h2>Claims principales</h2>
+        <svg lucideShieldCheck size="22"></svg>
+      </div>
+      <dl>
+        <div>
+          <dt>Issuer</dt>
+          <dd>{{ claim('iss') }}</dd>
+        </div>
+        <div>
+          <dt>Audience</dt>
+          <dd>{{ claim('aud') }}</dd>
+        </div>
+        <div>
+          <dt>Scopes</dt>
+          <dd>{{ claim('scp') }}</dd>
+        </div>
+        <div>
+          <dt>Roles</dt>
+          <dd>{{ claim('roles') }}</dd>
+        </div>
+        <div>
+          <dt>Expiracion</dt>
+          <dd>{{ expiracion() }}</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="panel token-panel">
+    <div class="panel-title">
+      <h2>Access token para Postman</h2>
+      <button type="button" class="primary" (click)="copiarToken()" [disabled]="!accessToken">
+        <svg lucideCopy size="18"></svg>
+        Copiar token
+      </button>
+    </div>
+    <textarea readonly [value]="accessToken"></textarea>
+  </section>
+
+  <section class="panel test-panel">
+    <div class="panel-title">
+      <h2>Banco de pruebas API</h2>
+      <span *ngIf="probando">Consultando...</span>
+    </div>
+
+    <div class="test-actions">
+      <button type="button" class="ghost" (click)="probarPublico()">
+        <svg lucideSend size="18"></svg>
+        GET publico
+      </button>
+      <button type="button" class="ghost" (click)="probarProtegido()">
+        <svg lucideShieldCheck size="18"></svg>
+        GET protegido
+      </button>
+      <button type="button" class="primary" (click)="probarPostSeguro()">
+        <svg lucideSend size="18"></svg>
+        POST seguro
+      </button>
+    </div>
+
+    <pre *ngIf="apiResponse">{{ apiResponse | json }}</pre>
+  </section>
+</main>

@@ -1,0 +1,188 @@
+.cuenta-page {
+  padding: 28px;
+}
+
+.page-header,
+.grid,
+.token-panel,
+.alert,
+.success {
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page-header {
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.section-label {
+  color: #28735e;
+  font-weight: 800;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p,
+dl,
+dd {
+  margin: 0;
+}
+
+h1 {
+  font-size: 34px;
+}
+
+.page-header p {
+  margin-top: 6px;
+  color: #647383;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #d8e0e6;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+dl {
+  display: grid;
+  gap: 12px;
+}
+
+dt {
+  color: #647383;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+dd {
+  margin-top: 4px;
+  word-break: break-word;
+  font-weight: 700;
+}
+
+.token-panel {
+  margin-top: 18px;
+}
+
+.test-panel {
+  max-width: 1180px;
+  margin: 18px auto 0;
+}
+
+textarea {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  border: 1px solid #cbd5dd;
+  border-radius: 8px;
+  padding: 14px;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: #21a179;
+  color: white;
+}
+
+.ghost {
+  background: white;
+  color: #14212c;
+  border: 1px solid #d8e0e6;
+}
+
+.test-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+pre {
+  margin: 16px 0 0;
+  background: #101820;
+  color: #d9f7ea;
+  border-radius: 8px;
+  padding: 14px;
+  overflow-x: auto;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.alert,
+.success {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.alert {
+  background: #fff0f0;
+  color: #9d2f2f;
+  border: 1px solid #e6c7c7;
+}
+
+.success {
+  background: #e8f6f0;
+  color: #0f6f55;
+  border: 1px solid #bcded2;
+}
+
+@media (max-width: 900px) {
+  .cuenta-page {
+    padding: 18px;
+  }
+
+  .page-header,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

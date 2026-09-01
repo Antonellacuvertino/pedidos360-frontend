@@ -1,0 +1,155 @@
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #102033 0%, #163447 42%, #eef2f5 42%, #eef2f5 100%);
+  color: #102033;
+}
+
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  align-items: center;
+  gap: 48px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.hero-copy {
+  color: white;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 64px;
+  line-height: 1;
+  margin: 0 0 18px;
+}
+
+p {
+  max-width: 560px;
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.actions {
+  margin-top: 32px;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 14px 18px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.primary {
+  background: white;
+  color: #24313d;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+}
+
+.microsoft-mark {
+  display: grid;
+  grid-template-columns: repeat(2, 9px);
+  grid-template-rows: repeat(2, 9px);
+  gap: 2px;
+}
+
+.microsoft-mark span:nth-child(1) {
+  background: #f25022;
+}
+
+.microsoft-mark span:nth-child(2) {
+  background: #7fba00;
+}
+
+.microsoft-mark span:nth-child(3) {
+  background: #00a4ef;
+}
+
+.microsoft-mark span:nth-child(4) {
+  background: #ffb900;
+}
+
+.system-panel {
+  background: white;
+  border: 1px solid #d8e0e6;
+  border-radius: 8px;
+  padding: 28px;
+  box-shadow: 0 22px 48px rgba(12, 28, 43, 0.18);
+}
+
+.node {
+  border-radius: 8px;
+  padding: 18px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.user {
+  background: #e8f6f0;
+  color: #0f6f55;
+}
+
+.gateway {
+  background: #fff3d6;
+  color: #8a5b00;
+}
+
+.bff {
+  background: #e8eef8;
+  color: #264f8a;
+}
+
+.line {
+  width: 2px;
+  height: 30px;
+  background: #bdc9d2;
+  margin: 0 auto;
+}
+
+.services {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.services span {
+  background: #f5f7f9;
+  border: 1px solid #d8e0e6;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+@media (max-width: 820px) {
+  .login-page {
+    background: #102033;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  h1 {
+    font-size: 46px;
+  }
+}
