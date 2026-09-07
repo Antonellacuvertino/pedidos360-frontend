@@ -3,5 +3,10 @@ dist/
 .angular/
 .env
 npm-debug.log*
+run.log
+run.err.log
+static.log
+static.err.log
+pedidos360-login.png
 .idea/
 .vscode/
