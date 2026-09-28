@@ -22,12 +22,15 @@ export const environment = {
     tenantId: 'TENANT_ID_DE_AZURE',
     redirectUri: 'https://URL_PUBLICA_DEL_FRONTEND',
     authority: 'https://login.microsoftonline.com/TENANT_ID_DE_AZURE',
-    apiScope: 'api://CLIENT_ID_O_APP_ID_URI/write-read'
+    apiScopes: [
+      'api://API_CLIENT_ID/read',
+      'api://API_CLIENT_ID/write'
+    ]
   }
 };
 ```
 
-El scope `write-read` debe existir en Microsoft Entra ID en la seccion **Expose an API**.
+Los scopes deben existir en la aplicacion de API registrada en Microsoft Entra ID. El `clientId` del frontend corresponde a la aplicacion SPA y puede ser distinto del client ID de la API.
 
 ## Ejecutar
 
@@ -47,7 +50,7 @@ npm run build
 - Login con boton "Iniciar sesion con Microsoft".
 - Dashboard con resumen consumido desde API Gateway.
 - Productos con GET y POST protegido.
-- Carrito con generacion de pedidos.
+- Carrito con publicacion asincrona de pedidos y respuesta `202 Accepted`.
 - Mi cuenta con claims, token JWT y banco de pruebas API.
 
 ## Flujo de autenticacion
@@ -59,3 +62,11 @@ npm run build
 5. `MsalInterceptor` adjunta `Authorization: Bearer <access_token>` en llamadas al API Gateway.
 6. API Gateway y Spring Security validan el JWT.
 
+## Flujo de compra
+
+1. El usuario agrega productos al carrito.
+2. Angular envia el pedido al BFF a traves de API Gateway.
+3. El backend responde que el evento fue aceptado.
+4. RabbitMQ distribuye el evento para guardar la orden, descontar stock, notificar y auditar.
+
+La interfaz no espera a que todos los consumidores terminen. Por eso muestra que el pedido fue aceptado para procesamiento.

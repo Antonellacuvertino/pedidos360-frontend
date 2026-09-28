@@ -25,7 +25,7 @@ export class LoginComponent {
 
   ingresar(): void {
     this.msalService.loginRedirect({
-      scopes: [environment.azure.apiScope],
+      scopes: environment.azure.apiScopes,
       prompt: 'select_account'
     });
   }

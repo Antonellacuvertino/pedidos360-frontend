@@ -34,6 +34,13 @@ export interface NuevoPedido {
   cantidad: number;
   total: number;
   estado: string;
+  email?: string;
+}
+
+export interface PedidoAceptado {
+  eventoId: string;
+  estado: string;
+  mensaje: string;
 }
 
 export interface NuevoProducto {
@@ -108,7 +115,7 @@ export class Pedidos360ApiService {
     return this.http.get<Pedido[]>(`${this.apiUrl}/pedidos`);
   }
 
-  crearPedido(request: NuevoPedido): Observable<Pedido> {
-    return this.http.post<Pedido>(`${this.apiUrl}/pedidos`, request);
+  crearPedido(request: NuevoPedido): Observable<PedidoAceptado> {
+    return this.http.post<PedidoAceptado>(`${this.apiUrl}/pedidos`, request);
   }
 }

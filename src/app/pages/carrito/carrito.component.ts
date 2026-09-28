@@ -83,12 +83,14 @@ export class CarritoComponent implements OnInit {
     }
 
     const clienteId = this.form.getRawValue().clienteId;
+    const email = this.clientes.find((cliente) => cliente.id === clienteId)?.email;
     const requests: NuevoPedido[] = this.items.map((item) => ({
       clienteId,
       productoId: item.producto.id,
       cantidad: item.cantidad,
       total: item.producto.precio * item.cantidad,
-      estado: 'RECIBIDO'
+      estado: 'RECIBIDO',
+      email
     }));
 
     this.enviando = true;
@@ -98,7 +100,7 @@ export class CarritoComponent implements OnInit {
     forkJoin(requests.map((request) => this.api.crearPedido(request))).subscribe({
       next: () => {
         this.carrito.limpiar();
-        this.mensaje = 'Pedido confirmado correctamente.';
+        this.mensaje = 'Pedido aceptado. La orden, el stock y la notificacion se estan procesando.';
         this.enviando = false;
       },
       error: () => {

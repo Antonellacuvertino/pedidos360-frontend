@@ -1,4 +1,4 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer } from '@angular/core';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import {
@@ -46,14 +46,14 @@ export function msalGuardConfigFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Redirect,
     authRequest: {
-      scopes: [environment.azure.apiScope]
+      scopes: environment.azure.apiScopes
     }
   };
 }
 
 export function msalInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, string[]>();
-  protectedResourceMap.set(environment.apiBaseUrl, [environment.azure.apiScope]);
+  protectedResourceMap.set(environment.apiBaseUrl, environment.azure.apiScopes);
 
   return {
     interactionType: InteractionType.Redirect,
@@ -65,6 +65,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
+    provideAppInitializer(() => inject(MSAL_INSTANCE).initialize()),
     {
       provide: MSAL_INSTANCE,
       useFactory: msalInstanceFactory

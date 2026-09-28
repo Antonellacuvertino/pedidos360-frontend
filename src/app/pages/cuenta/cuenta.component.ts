@@ -44,7 +44,7 @@ export class CuentaComponent implements OnInit {
     this.error = '';
     this.msalService.acquireTokenSilent({
       account,
-      scopes: [environment.azure.apiScope]
+      scopes: environment.azure.apiScopes
     }).subscribe({
       next: (result) => {
         this.accessToken = result.accessToken;
