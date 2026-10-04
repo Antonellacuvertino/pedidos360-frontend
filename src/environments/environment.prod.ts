@@ -4,13 +4,13 @@ export const environment = {
   apiBaseUrl: 'https://2iguro8kei.execute-api.us-east-1.amazonaws.com',
 
   azure: {
-    clientId: '53818f62-6c22-49d9-a314-832e4bbce010',
+    clientId: 'ad02ca6f-9972-496e-837c-98c92a43220e',
     tenantId: 'e5372bf0-c5e3-4286-887c-79069f209c1f',
     redirectUri: 'https://main.d1ipad4fvqyxdz.amplifyapp.com',
     authority: 'https://login.microsoftonline.com/e5372bf0-c5e3-4286-887c-79069f209c1f',
     apiScopes: [
-      'api://99523fae-980a-4c64-bde4-26e92c7376e9/read',
-      'api://99523fae-980a-4c64-bde4-26e92c7376e9/write'
+      'api://7d7e6f82-35dc-4fd2-b580-7776c558d963/pedidos.read',
+      'api://7d7e6f82-35dc-4fd2-b580-7776c558d963/pedidos.write'
     ]
   }
 };

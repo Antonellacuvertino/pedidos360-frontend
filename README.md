@@ -12,7 +12,7 @@ Consume el backend exclusivamente mediante:
 https://2iguro8kei.execute-api.us-east-1.amazonaws.com
 ```
 
-En Microsoft Entra ID, la aplicacion SPA `53818f62-6c22-49d9-a314-832e4bbce010` debe mantener registradas estas URI de redireccion:
+En Microsoft Entra ID, la aplicacion SPA `ad02ca6f-9972-496e-837c-98c92a43220e` debe mantener registradas estas URI de redireccion:
 
 ```text
 http://localhost:4200
@@ -20,6 +20,8 @@ https://main.d1ipad4fvqyxdz.amplifyapp.com
 ```
 
 La URL productiva debe estar configurada en **Authentication > Single-page application**, no como aplicacion web.
+
+La API registrada en Entra ID usa el client ID `7d7e6f82-35dc-4fd2-b580-7776c558d963` y expone los permisos delegados `pedidos.read` y `pedidos.write`.
 
 Aplicacion Angular para Pedidos360. Implementa login con Microsoft Entra ID usando MSAL, rutas protegidas, catalogo de productos, carrito y pantalla para ver/copiar el access token.
 
@@ -44,8 +46,8 @@ export const environment = {
     redirectUri: 'https://URL_PUBLICA_DEL_FRONTEND',
     authority: 'https://login.microsoftonline.com/TENANT_ID_DE_AZURE',
     apiScopes: [
-      'api://API_CLIENT_ID/read',
-      'api://API_CLIENT_ID/write'
+      'api://API_CLIENT_ID/pedidos.read',
+      'api://API_CLIENT_ID/pedidos.write'
     ]
   }
 };
