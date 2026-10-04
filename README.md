@@ -12,6 +12,15 @@ Consume el backend exclusivamente mediante:
 https://2iguro8kei.execute-api.us-east-1.amazonaws.com
 ```
 
+En Microsoft Entra ID, la aplicacion SPA `53818f62-6c22-49d9-a314-832e4bbce010` debe mantener registradas estas URI de redireccion:
+
+```text
+http://localhost:4200
+https://main.d1ipad4fvqyxdz.amplifyapp.com
+```
+
+La URL productiva debe estar configurada en **Authentication > Single-page application**, no como aplicacion web.
+
 Aplicacion Angular para Pedidos360. Implementa login con Microsoft Entra ID usando MSAL, rutas protegidas, catalogo de productos, carrito y pantalla para ver/copiar el access token.
 
 ## Tecnologias
