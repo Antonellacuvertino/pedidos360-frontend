@@ -1,5 +1,17 @@
 # Frontend Pedidos360
 
+Aplicacion desplegada en:
+
+```text
+https://main.d1ipad4fvqyxdz.amplifyapp.com
+```
+
+Consume el backend exclusivamente mediante:
+
+```text
+https://2iguro8kei.execute-api.us-east-1.amazonaws.com
+```
+
 Aplicacion Angular para Pedidos360. Implementa login con Microsoft Entra ID usando MSAL, rutas protegidas, catalogo de productos, carrito y pantalla para ver/copiar el access token.
 
 ## Tecnologias
