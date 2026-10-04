@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'https://gzcsngmfed.execute-api.us-east-1.amazonaws.com',
+  apiBaseUrl: 'https://2iguro8kei.execute-api.us-east-1.amazonaws.com',
   azure: {
     clientId: '53818f62-6c22-49d9-a314-832e4bbce010',
     tenantId: 'e5372bf0-c5e3-4286-887c-79069f209c1f',
