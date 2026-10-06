@@ -21,7 +21,9 @@ https://100-48-142-195.sslip.io
 
 La URL productiva debe estar configurada en **Authentication > Single-page application**, no como aplicacion web.
 
-La API registrada en Entra ID usa el client ID `7d7e6f82-35dc-4fd2-b580-7776c558d963` y expone los permisos delegados `pedidos.read` y `pedidos.escribe`.
+La API registrada en Entra ID usa el client ID `7d7e6f82-35dc-4fd2-b580-7776c558d963` y expone los permisos delegados `pedidos.read` y `pedidos.write`.
+
+El scope de escritura debe solicitarse con su nombre tecnico `pedidos.write`. El navegador puede mostrarlo traducido como `pedidos.escribe`, pero esa traduccion no es una URI de permiso valida y provoca `AADSTS650053`.
 
 Aplicacion Angular para Pedidos360. Implementa login con Microsoft Entra ID usando MSAL, rutas protegidas, catalogo de productos, carrito y pantalla para ver/copiar el access token.
 
@@ -47,7 +49,7 @@ export const environment = {
     authority: 'https://login.microsoftonline.com/TENANT_ID_DE_AZURE',
     apiScopes: [
       'api://API_CLIENT_ID/pedidos.read',
-      'api://API_CLIENT_ID/pedidos.escribe'
+      'api://API_CLIENT_ID/pedidos.write'
     ]
   }
 };
@@ -102,7 +104,7 @@ docker compose logs --tail=80 frontend
 5. `MsalInterceptor` adjunta `Authorization: Bearer <access_token>` en llamadas al API Gateway.
 6. API Gateway y Spring Security validan el JWT.
 
-Si el dashboard abre pero **Mi cuenta** no muestra el access token, revisar el codigo de error que aparece en esa pantalla. Confirmar en Entra ID que la SPA tiene los permisos delegados `pedidos.read` y `pedidos.escribe` de la API y que se concedio el consentimiento necesario. Despues de modificar permisos, cerrar sesion en Pedidos360 e ingresar nuevamente para solicitar un token nuevo. Para la presentacion se debe copiar el **access token** de Mi cuenta; el ID token no sirve para llamar al API Gateway.
+Si el dashboard abre pero **Mi cuenta** no muestra el access token, revisar el codigo de error que aparece en esa pantalla. Confirmar en Entra ID que la SPA tiene los permisos delegados `pedidos.read` y `pedidos.write` de la API y que se concedio el consentimiento necesario. Despues de modificar permisos, cerrar sesion en Pedidos360 e ingresar nuevamente para solicitar un token nuevo. Para la presentacion se debe copiar el **access token** de Mi cuenta; el ID token no sirve para llamar al API Gateway.
 
 ## Flujo de compra
 
