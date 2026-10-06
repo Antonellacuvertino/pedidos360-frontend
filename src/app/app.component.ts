@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 
 @Component({
@@ -11,12 +11,22 @@ import { MsalService } from '@azure/msal-angular';
   `
 })
 export class AppComponent implements OnInit {
-  constructor(private readonly msalService: MsalService) {}
+  constructor(
+    private readonly msalService: MsalService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
     this.msalService.handleRedirectObservable().subscribe((result) => {
-      if (result?.account) {
-        this.msalService.instance.setActiveAccount(result.account);
+      const account = result?.account
+        ?? this.msalService.instance.getActiveAccount()
+        ?? this.msalService.instance.getAllAccounts()[0];
+
+      if (account) {
+        this.msalService.instance.setActiveAccount(account);
+        if (this.router.url === '/') {
+          void this.router.navigateByUrl('/app/dashboard');
+        }
       }
     });
   }

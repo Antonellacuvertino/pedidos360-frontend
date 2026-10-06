@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MsalService } from '@azure/msal-angular';
-import { InteractionType } from '@azure/msal-browser';
 import { LucideLayoutDashboard, LucideShieldCheck } from '@lucide/angular';
 import { environment } from '../../../environments/environment';
 
@@ -14,6 +13,9 @@ import { environment } from '../../../environments/environment';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  ingresando = false;
+  error = '';
+
   constructor(
     private readonly msalService: MsalService,
     private readonly router: Router
@@ -24,15 +26,23 @@ export class LoginComponent {
   }
 
   ingresar(): void {
+    if (this.ingresando) {
+      return;
+    }
+
+    this.ingresando = true;
+    this.error = '';
     this.msalService.loginRedirect({
-      scopes: environment.azure.apiScopes,
-      prompt: 'select_account'
+      scopes: environment.azure.apiScopes
+    }).subscribe({
+      error: () => {
+        this.ingresando = false;
+        this.error = 'No se pudo iniciar sesion con Microsoft. Intenta nuevamente.';
+      }
     });
   }
 
   irDashboard(): void {
     void this.router.navigateByUrl('/app/dashboard');
   }
-
-  protected readonly InteractionType = InteractionType;
 }

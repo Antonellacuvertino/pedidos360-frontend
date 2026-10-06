@@ -6,11 +6,11 @@ export const environment = {
   azure: {
     clientId: 'ad02ca6f-9972-496e-837c-98c92a43220e',
     tenantId: 'e5372bf0-c5e3-4286-887c-79069f209c1f',
-    redirectUri: 'https://main.d1ipad4fvqyxdz.amplifyapp.com',
+    redirectUri: 'https://100-48-142-195.sslip.io',
     authority: 'https://login.microsoftonline.com/e5372bf0-c5e3-4286-887c-79069f209c1f',
     apiScopes: [
       'api://7d7e6f82-35dc-4fd2-b580-7776c558d963/pedidos.read',
-      'api://7d7e6f82-35dc-4fd2-b580-7776c558d963/pedidos.write'
+      'api://7d7e6f82-35dc-4fd2-b580-7776c558d963/pedidos.escribe'
     ]
   }
 };

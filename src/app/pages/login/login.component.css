@@ -62,6 +62,17 @@ button {
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
 }
 
+button:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.login-error {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #ffd8d8;
+}
+
 .microsoft-mark {
   display: grid;
   grid-template-columns: repeat(2, 9px);

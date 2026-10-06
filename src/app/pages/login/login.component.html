@@ -10,20 +10,21 @@
         Panel base para revisar pedidos, clientes y productos con autenticacion centralizada y backend protegido por JWT.
       </p>
       <div class="actions">
-        <button type="button" class="primary" (click)="ingresar()" *ngIf="!autenticado">
+        <button type="button" class="primary" (click)="ingresar()" [disabled]="ingresando" *ngIf="!autenticado">
           <span class="microsoft-mark" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
             <span></span>
           </span>
-          Iniciar sesion con Microsoft
+          {{ ingresando ? 'Abriendo Microsoft...' : 'Iniciar sesion con Microsoft' }}
         </button>
         <button type="button" class="primary" (click)="irDashboard()" *ngIf="autenticado">
           <svg lucideLayoutDashboard size="18"></svg>
           Ir al dashboard
         </button>
       </div>
+      <p class="login-error" *ngIf="error" role="alert">{{ error }}</p>
     </div>
     <div class="system-panel" aria-label="Arquitectura Pedidos360">
       <div class="node user">Frontend Angular</div>

@@ -1,9 +1,9 @@
 # Frontend Pedidos360
 
-Aplicacion desplegada en:
+Direccion HTTPS configurada para el frontend en EC2:
 
 ```text
-https://main.d1ipad4fvqyxdz.amplifyapp.com
+https://100-48-142-195.sslip.io
 ```
 
 Consume el backend exclusivamente mediante:
@@ -16,12 +16,12 @@ En Microsoft Entra ID, la aplicacion SPA `ad02ca6f-9972-496e-837c-98c92a43220e` 
 
 ```text
 http://localhost:4200
-https://main.d1ipad4fvqyxdz.amplifyapp.com
+https://100-48-142-195.sslip.io
 ```
 
 La URL productiva debe estar configurada en **Authentication > Single-page application**, no como aplicacion web.
 
-La API registrada en Entra ID usa el client ID `7d7e6f82-35dc-4fd2-b580-7776c558d963` y expone los permisos delegados `pedidos.read` y `pedidos.write`.
+La API registrada en Entra ID usa el client ID `7d7e6f82-35dc-4fd2-b580-7776c558d963` y expone los permisos delegados `pedidos.read` y `pedidos.escribe`.
 
 Aplicacion Angular para Pedidos360. Implementa login con Microsoft Entra ID usando MSAL, rutas protegidas, catalogo de productos, carrito y pantalla para ver/copiar el access token.
 
@@ -47,7 +47,7 @@ export const environment = {
     authority: 'https://login.microsoftonline.com/TENANT_ID_DE_AZURE',
     apiScopes: [
       'api://API_CLIENT_ID/pedidos.read',
-      'api://API_CLIENT_ID/pedidos.write'
+      'api://API_CLIENT_ID/pedidos.escribe'
     ]
   }
 };
@@ -55,7 +55,7 @@ export const environment = {
 
 Los scopes deben existir en la aplicacion de API registrada en Microsoft Entra ID. El `clientId` del frontend corresponde a la aplicacion SPA y puede ser distinto del client ID de la API.
 
-## Ejecutar
+## Ejecutar localmente
 
 ```bash
 npm install
@@ -67,6 +67,23 @@ npm start
 ```bash
 npm run build
 ```
+
+## Publicar en EC2
+
+El `Dockerfile` compila Angular y Caddy entrega los archivos estaticos por HTTPS. El certificado se conserva en los volumenes definidos en `compose.yaml`.
+
+1. En el security group de EC2 permitir TCP 80 y 443 desde Internet.
+2. Confirmar que `100-48-142-195.sslip.io` resuelve a la IP elastica de la instancia.
+3. Registrar `https://100-48-142-195.sslip.io` como URI de redireccion SPA en Entra ID.
+4. Clonar este repositorio en EC2 y ejecutar:
+
+```bash
+docker compose up -d --build
+docker compose ps
+docker compose logs --tail=80 frontend
+```
+
+5. Comprobar `https://100-48-142-195.sslip.io` y realizar login con Microsoft. Si cambia la IP elastica, actualizar `Caddyfile`, `environment.prod.ts`, CORS y la URI de Entra ID antes de reconstruir.
 
 ## Pantallas
 
