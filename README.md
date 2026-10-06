@@ -112,3 +112,7 @@ Si el dashboard abre pero **Mi cuenta** no muestra el access token, revisar el c
 4. RabbitMQ distribuye el evento para guardar la orden, descontar stock, notificar y auditar.
 
 La interfaz no espera a que todos los consumidores terminen. Por eso muestra que el pedido fue aceptado para procesamiento.
+
+## Estado del laboratorio
+
+El 6 de octubre de 2026 se comprobo que `https://100-48-142-195.sslip.io` responde `200` con HTTPS valido y que el frontend compila sin errores. API Gateway acepta el preflight CORS desde ese origen. La prueba de login Microsoft y del token todavia requiere confirmar la URI SPA exacta y el consentimiento en Entra ID; no considerar terminada la integracion autenticada hasta ver el access token en **Mi cuenta** y ejecutar un GET protegido.
