@@ -7,3 +7,28 @@ body {
   font-family: Inter, Arial, sans-serif;
   background: #eef2f5;
 }
+
+@media print {
+  .sidebar,
+  .topbar,
+  .carrito-page > .page-header,
+  .carrito-page > .grid,
+  .carrito-page > .alert,
+  .carrito-page > .success,
+  .receipt-actions {
+    display: none !important;
+  }
+
+  .app-shell {
+    display: block !important;
+  }
+
+  .carrito-page {
+    padding: 0 !important;
+  }
+
+  .receipt {
+    margin: 0 !important;
+    border: 0 !important;
+  }
+}

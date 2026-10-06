@@ -70,4 +70,41 @@
       </form>
     </aside>
   </section>
+
+  <section class="receipt" *ngIf="comprobante as recibo">
+    <div class="receipt-heading">
+      <div>
+        <span class="section-label">Pedidos360</span>
+        <h2>Comprobante de pedido</h2>
+        <p>Confirmacion de solicitud. No es una boleta tributaria ni acredita un pago.</p>
+      </div>
+      <button type="button" class="print-button receipt-actions" (click)="imprimirComprobante()">
+        <svg lucidePrinter size="18"></svg>
+        Imprimir / guardar PDF
+      </button>
+    </div>
+
+    <div class="receipt-meta">
+      <div><span>Fecha</span><strong>{{ recibo.fecha | date:'dd/MM/yyyy HH:mm' }}</strong></div>
+      <div><span>Cliente</span><strong>{{ recibo.cliente }}</strong></div>
+      <div><span>Estado inicial</span><strong>Solicitud aceptada</strong></div>
+    </div>
+
+    <div class="receipt-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Producto</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let linea of recibo.lineas">
+            <td>{{ linea.producto }}<small>Evento: {{ linea.eventoId }}</small></td>
+            <td>{{ linea.cantidad }}</td>
+            <td>{{ linea.precioUnitario | currency:'CLP':'symbol-narrow':'1.0-0' }}</td>
+            <td>{{ linea.precioUnitario * linea.cantidad | currency:'CLP':'symbol-narrow':'1.0-0' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="receipt-total"><span>Total referencial</span><strong>{{ recibo.total | currency:'CLP':'symbol-narrow':'1.0-0' }}</strong></div>
+  </section>
 </main>

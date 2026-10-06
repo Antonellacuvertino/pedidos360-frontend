@@ -42,6 +42,8 @@ export class ShellComponent {
   }
 
   salir(): void {
+    this.carrito.limpiar();
+    sessionStorage.removeItem('pedidos360_ultimo_comprobante');
     this.msalService.logoutRedirect();
   }
 }

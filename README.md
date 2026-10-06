@@ -93,6 +93,7 @@ docker compose logs --tail=80 frontend
 - Dashboard con resumen consumido desde API Gateway.
 - Productos con GET y POST protegido.
 - Carrito con publicacion asincrona de pedidos y respuesta `202 Accepted`.
+- Comprobante de pedido imprimible o guardable como PDF tras la aceptacion de todos los productos. No es boleta tributaria ni comprobante de pago.
 - Mi cuenta con claims, token JWT y banco de pruebas API.
 
 ## Flujo de autenticacion
@@ -112,9 +113,10 @@ Si el dashboard abre pero **Mi cuenta** no muestra el access token, revisar el c
 2. Angular envia el pedido al BFF a traves de API Gateway.
 3. El backend responde que el evento fue aceptado.
 4. RabbitMQ distribuye el evento para guardar la orden, descontar stock, notificar y auditar.
+5. La pantalla muestra un comprobante con fecha, cliente, productos, total referencial e identificadores de evento. Se puede imprimir o guardar como PDF desde el navegador.
 
-La interfaz no espera a que todos los consumidores terminen. Por eso muestra que el pedido fue aceptado para procesamiento.
+La interfaz no espera a que todos los consumidores terminen. Por eso el comprobante acredita la aceptacion de la solicitud, no la entrega ni el pago. Si alguna peticion del carrito falla, se debe revisar Pedidos recientes antes de repetir la compra porque otras peticiones pueden haberse aceptado.
 
 ## Estado del laboratorio
 
-El 6 de octubre de 2026 se comprobo que `https://100-48-142-195.sslip.io` responde `200` con HTTPS valido y que el frontend compila sin errores. API Gateway acepta el preflight CORS desde ese origen. La prueba de login Microsoft y del token todavia requiere confirmar la URI SPA exacta y el consentimiento en Entra ID; no considerar terminada la integracion autenticada hasta ver el access token en **Mi cuenta** y ejecutar un GET protegido.
+El 6 de octubre de 2026 se comprobo el inicio de sesion Microsoft y la obtencion del access token en **Mi cuenta**. El claim `aud` recibido es el ID de la API sin prefijo `api://`; API Gateway y Spring deben validar exactamente ese valor. La prueba de GET/POST protegido y compra completa debe repetirse despues de actualizar el JWT Authorizer del Gateway.

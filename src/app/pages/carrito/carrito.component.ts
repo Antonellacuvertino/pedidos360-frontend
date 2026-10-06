@@ -5,11 +5,26 @@ import { forkJoin } from 'rxjs';
 import {
   LucideMinus,
   LucidePlus,
+  LucidePrinter,
   LucideShoppingCart,
   LucideTrash2
 } from '@lucide/angular';
 import { CarritoService, ItemCarrito } from '../../services/carrito.service';
 import { Cliente, NuevoPedido, Pedidos360ApiService } from '../../services/pedidos360-api.service';
+
+interface LineaComprobante {
+  producto: string;
+  cantidad: number;
+  precioUnitario: number;
+  eventoId: string;
+}
+
+interface ComprobantePedido {
+  fecha: string;
+  cliente: string;
+  lineas: LineaComprobante[];
+  total: number;
+}
 
 @Component({
   selector: 'app-carrito',
@@ -20,6 +35,7 @@ import { Cliente, NuevoPedido, Pedidos360ApiService } from '../../services/pedid
     CurrencyPipe,
     LucideMinus,
     LucidePlus,
+    LucidePrinter,
     LucideShoppingCart,
     LucideTrash2
   ],
@@ -32,6 +48,8 @@ export class CarritoComponent implements OnInit {
   error = '';
   mensaje = '';
   enviando = false;
+  comprobante: ComprobantePedido | null = null;
+  private readonly comprobanteKey = 'pedidos360_ultimo_comprobante';
 
   form = this.fb.nonNullable.group({
     clienteId: [1, [Validators.required, Validators.min(1)]]
@@ -44,6 +62,15 @@ export class CarritoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const guardado = sessionStorage.getItem(this.comprobanteKey);
+    if (guardado) {
+      try {
+        this.comprobante = JSON.parse(guardado) as ComprobantePedido;
+      } catch {
+        sessionStorage.removeItem(this.comprobanteKey);
+      }
+    }
+
     this.carrito.items$.subscribe((items) => {
       this.items = items;
     });
@@ -83,14 +110,24 @@ export class CarritoComponent implements OnInit {
     }
 
     const clienteId = this.form.getRawValue().clienteId;
-    const email = this.clientes.find((cliente) => cliente.id === clienteId)?.email;
+    const cliente = this.clientes.find((actual) => actual.id === clienteId);
+    if (!cliente) {
+      this.error = 'Selecciona un cliente antes de confirmar.';
+      return;
+    }
+
+    const itemsConfirmados = this.items.map((item) => ({
+      producto: item.producto.nombre,
+      cantidad: item.cantidad,
+      precioUnitario: item.producto.precio
+    }));
     const requests: NuevoPedido[] = this.items.map((item) => ({
       clienteId,
       productoId: item.producto.id,
       cantidad: item.cantidad,
       total: item.producto.precio * item.cantidad,
       estado: 'RECIBIDO',
-      email
+      email: cliente.email
     }));
 
     this.enviando = true;
@@ -98,15 +135,29 @@ export class CarritoComponent implements OnInit {
     this.mensaje = '';
 
     forkJoin(requests.map((request) => this.api.crearPedido(request))).subscribe({
-      next: () => {
+      next: (respuestas) => {
+        this.comprobante = {
+          fecha: new Date().toISOString(),
+          cliente: cliente.nombre,
+          lineas: itemsConfirmados.map((item, index) => ({
+            ...item,
+            eventoId: respuestas[index].eventoId
+          })),
+          total: itemsConfirmados.reduce((total, item) => total + item.precioUnitario * item.cantidad, 0)
+        };
+        sessionStorage.setItem(this.comprobanteKey, JSON.stringify(this.comprobante));
         this.carrito.limpiar();
-        this.mensaje = 'Pedido aceptado. La orden, el stock y la notificacion se estan procesando.';
+        this.mensaje = 'Pedido aceptado. El procesamiento de la orden, el stock y la notificacion es asincrono.';
         this.enviando = false;
       },
       error: () => {
-        this.error = 'El pedido no se pudo confirmar. Revisa token, rol y API Gateway.';
+        this.error = 'No se confirmaron todos los productos. Revisa Pedidos recientes antes de reintentar: alguna solicitud pudo haberse aceptado.';
         this.enviando = false;
       }
     });
+  }
+
+  imprimirComprobante(): void {
+    window.print();
   }
 }
