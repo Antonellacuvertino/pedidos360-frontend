@@ -17,6 +17,7 @@
 
 .hero-copy {
   color: white;
+  min-width: 0;
 }
 
 .eyebrow {
@@ -97,6 +98,7 @@ button:disabled {
 }
 
 .system-panel {
+  min-width: 0;
   background: white;
   border: 1px solid #d8e0e6;
   border-radius: 8px;
@@ -135,7 +137,7 @@ button:disabled {
 
 .services {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   margin-top: 16px;
 }
@@ -156,8 +158,20 @@ button:disabled {
   }
 
   .hero {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
+  }
+
+  .system-panel {
+    padding: 20px;
+  }
+
+  .services {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .services span:last-child {
+    grid-column: 1 / -1;
   }
 
   h1 {
