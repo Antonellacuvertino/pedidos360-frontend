@@ -10,7 +10,7 @@
         Panel base para revisar pedidos, clientes y productos con autenticacion centralizada y backend protegido por JWT.
       </p>
       <div class="actions">
-        <button type="button" class="primary" (click)="ingresar()" [disabled]="ingresando" *ngIf="!autenticado">
+        <button type="button" class="primary" (click)="ingresar()" [disabled]="ingresando || procesandoRedireccion" *ngIf="!autenticado">
           <span class="microsoft-mark" aria-hidden="true">
             <span></span>
             <span></span>

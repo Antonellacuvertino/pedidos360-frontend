@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.msalService.handleRedirectObservable().subscribe((result) => {
+    this.msalService.handleRedirectObservable({ navigateToLoginRequestUrl: false }).subscribe((result) => {
       const account = result?.account
         ?? this.msalService.instance.getActiveAccount()
         ?? this.msalService.instance.getAllAccounts()[0];

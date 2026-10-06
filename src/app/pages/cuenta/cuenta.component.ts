@@ -50,8 +50,8 @@ export class CuentaComponent implements OnInit {
         this.accessToken = result.accessToken;
         this.claims = this.decodificarJwt(result.accessToken);
       },
-      error: () => {
-        this.error = 'No se pudo obtener el access token. Cierra sesion e ingresa nuevamente.';
+      error: (error: { errorCode?: string }) => {
+        this.error = `No se pudo obtener el access token${error.errorCode ? ` (${error.errorCode})` : ''}. Revisa el consentimiento de los permisos en Microsoft Entra.`;
       }
     });
   }
