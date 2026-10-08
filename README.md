@@ -105,6 +105,8 @@ docker compose logs --tail=80 frontend
 5. `MsalInterceptor` adjunta `Authorization: Bearer <access_token>` en llamadas al API Gateway.
 6. API Gateway y Spring Security validan el JWT.
 
+El `protectedResourceMap` usa la ruta `${apiBaseUrl}/api/*`: MSAL compara las URL de forma estricta y una clave con solo el dominio no cubre `/api/v1/productos` ni las otras rutas de la API.
+
 Si el dashboard abre pero **Mi cuenta** no muestra el access token, revisar el codigo de error que aparece en esa pantalla. Confirmar en Entra ID que la SPA tiene los permisos delegados `pedidos.read` y `pedidos.write` de la API y que se concedio el consentimiento necesario. Despues de modificar permisos, cerrar sesion en Pedidos360 e ingresar nuevamente para solicitar un token nuevo. Para la presentacion se debe copiar el **access token** de Mi cuenta; el ID token no sirve para llamar al API Gateway.
 
 ## Flujo de compra
