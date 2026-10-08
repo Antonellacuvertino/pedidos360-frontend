@@ -121,4 +121,4 @@ La interfaz no espera a que todos los consumidores terminen. Por eso el comproba
 
 ## Estado del laboratorio
 
-El 6 de octubre de 2026 se comprobo el inicio de sesion Microsoft y la obtencion del access token en **Mi cuenta**. El claim `aud` recibido es el ID de la API sin prefijo `api://`; API Gateway y Spring deben validar exactamente ese valor. La prueba de GET/POST protegido y compra completa debe repetirse despues de actualizar el JWT Authorizer del Gateway.
+El 8 de octubre de 2026 se comprobo el inicio de sesion Microsoft, el access token en **Mi cuenta**, la carga del catalogo a traves de API Gateway y la confirmacion de un pedido con comprobante. El claim `aud` recibido es el ID de la API sin prefijo `api://`; API Gateway y Spring validan exactamente ese valor. Tambien se corrigio el patron del `MsalInterceptor` para que adjunte el token a `/api/*`.
