@@ -109,6 +109,8 @@ El `protectedResourceMap` usa la ruta `${apiBaseUrl}/api/*`: MSAL compara las UR
 
 Si el dashboard abre pero **Mi cuenta** no muestra el access token, revisar el codigo de error que aparece en esa pantalla. Confirmar en Entra ID que la SPA tiene los permisos delegados `pedidos.read` y `pedidos.write` de la API y que se concedio el consentimiento necesario. Despues de modificar permisos, cerrar sesion en Pedidos360 e ingresar nuevamente para solicitar un token nuevo. Para la presentacion se debe copiar el **access token** de Mi cuenta; el ID token no sirve para llamar al API Gateway.
 
+Si Productos queda cargando, la espera termina a los 20 segundos y muestra un error. Un `401` indica token rechazado o sesion vencida; un `403`, falta de permisos; un error de conexion indica que no se pudo alcanzar el Gateway. Antes de reintentar, comprobar que las instancias EC2 y los target groups del ALB esten activos. Un frontend previamente abierto puede seguir visible aunque el backend haya sido detenido.
+
 ## Flujo de compra
 
 1. El usuario agrega productos al carrito.

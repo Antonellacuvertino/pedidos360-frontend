@@ -1,7 +1,9 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucidePackage, LucidePlus, LucideRefreshCw, LucideShoppingCart } from '@lucide/angular';
+import { finalize, timeout, TimeoutError } from 'rxjs';
 import { CarritoService } from '../../services/carrito.service';
 import { NuevoProducto, Pedidos360ApiService, Producto } from '../../services/pedidos360-api.service';
 
@@ -47,14 +49,25 @@ export class ProductosComponent implements OnInit {
     this.cargando = true;
     this.error = '';
 
-    this.api.listarProductos().subscribe({
+    this.api.listarProductos().pipe(
+      timeout(20000),
+      finalize(() => this.cargando = false)
+    ).subscribe({
       next: (productos) => {
         this.productos = productos;
-        this.cargando = false;
       },
-      error: () => {
-        this.error = 'No fue posible cargar productos desde el API Gateway.';
-        this.cargando = false;
+      error: (error: unknown) => {
+        if (error instanceof TimeoutError) {
+          this.error = 'El API Gateway no respondio en 20 segundos. Intenta actualizar nuevamente.';
+        } else if (error instanceof HttpErrorResponse && error.status === 401) {
+          this.error = 'La sesion expiro o el token fue rechazado (401). Cierra sesion e ingresa nuevamente.';
+        } else if (error instanceof HttpErrorResponse && error.status === 403) {
+          this.error = 'Tu cuenta no tiene permiso para consultar productos (403).';
+        } else if (error instanceof HttpErrorResponse && error.status === 0) {
+          this.error = 'No hay conexion con el API Gateway. Comprueba que los servicios esten encendidos.';
+        } else {
+          this.error = 'No fue posible cargar productos desde el API Gateway.';
+        }
       }
     });
   }

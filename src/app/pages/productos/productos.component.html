@@ -14,6 +14,7 @@
   <p class="alert" *ngIf="error">{{ error }}</p>
   <p class="success" *ngIf="mensaje">{{ mensaje }}</p>
   <p class="loading" *ngIf="cargando">Cargando productos...</p>
+  <p class="loading" *ngIf="!cargando && !error && productos.length === 0">No hay productos disponibles.</p>
 
   <section class="grid">
     <div class="catalog">
