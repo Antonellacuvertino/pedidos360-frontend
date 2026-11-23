@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucidePackage, LucidePlus, LucideRefreshCw, LucideShoppingCart } from '@lucide/angular';
 import { finalize, timeout, TimeoutError } from 'rxjs';
 import { CarritoService } from '../../services/carrito.service';
+import { environment } from '../../../environments/environment';
 import { NuevoProducto, Pedidos360ApiService, Producto } from '../../services/pedidos360-api.service';
 
 @Component({
@@ -24,6 +25,8 @@ import { NuevoProducto, Pedidos360ApiService, Producto } from '../../services/pe
 })
 export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
+  readonly kafkaEnabled = environment.kafkaEnabled;
+  detalle?: Producto;
   cargando = false;
   error = '';
   mensaje = '';
@@ -75,6 +78,16 @@ export class ProductosComponent implements OnInit {
   agregarAlCarrito(producto: Producto): void {
     this.carrito.agregar(producto);
     this.mensaje = `${producto.nombre} agregado al carrito.`;
+  }
+
+  verDetalle(producto: Producto): void {
+    this.api.detalleProducto(producto.id).subscribe({
+      next: (detalle) => {
+        this.detalle = detalle;
+        this.error = '';
+      },
+      error: () => this.error = 'No fue posible abrir el detalle del producto.'
+    });
   }
 
   crearProducto(): void {

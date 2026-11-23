@@ -7,9 +7,11 @@ import {
   LucideLogOut,
   LucidePackage,
   LucideShoppingCart,
-  LucideUsers
+  LucideUsers,
+  LucideActivity
 } from '@lucide/angular';
 import { CarritoService } from '../../services/carrito.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-shell',
@@ -23,13 +25,15 @@ import { CarritoService } from '../../services/carrito.service';
     LucideLogOut,
     LucidePackage,
     LucideShoppingCart,
-    LucideUsers
+    LucideUsers,
+    LucideActivity
   ],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.css'
 })
 export class ShellComponent {
   readonly items$ = this.carrito.items$;
+  readonly kafkaEnabled = environment.kafkaEnabled;
 
   constructor(
     private readonly msalService: MsalService,

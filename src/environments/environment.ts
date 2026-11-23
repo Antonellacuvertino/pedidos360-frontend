@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  kafkaEnabled: false,
   apiBaseUrl: 'https://2iguro8kei.execute-api.us-east-1.amazonaws.com',
   azure: {
     clientId: 'ad02ca6f-9972-496e-837c-98c92a43220e',

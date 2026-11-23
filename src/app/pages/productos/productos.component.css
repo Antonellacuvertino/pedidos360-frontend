@@ -53,6 +53,19 @@ h1 {
   gap: 14px;
 }
 
+.detail {
+  align-self: start;
+  padding: 18px;
+  border: 1px solid #d8e0e6;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.detail p {
+  color: #647383;
+  margin: 8px 0;
+}
+
 .product-card,
 .panel {
   background: white;

@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  kafkaEnabled: false,
 
   apiBaseUrl: 'https://2iguro8kei.execute-api.us-east-1.amazonaws.com',
 

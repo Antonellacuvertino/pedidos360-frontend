@@ -6,6 +6,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ProductosComponent } from './pages/productos/productos.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { CuentaComponent } from './pages/cuenta/cuenta.component';
+import { StreamingComponent } from './pages/streaming/streaming.component';
+import { environment } from '../environments/environment';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -18,7 +20,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'productos', component: ProductosComponent },
       { path: 'carrito', component: CarritoComponent },
-      { path: 'cuenta', component: CuentaComponent }
+      { path: 'cuenta', component: CuentaComponent },
+      { path: 'streaming', component: StreamingComponent, canMatch: [() => environment.kafkaEnabled] }
     ]
   },
   { path: 'dashboard', redirectTo: 'app/dashboard' },

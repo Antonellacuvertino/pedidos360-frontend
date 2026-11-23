@@ -27,6 +27,19 @@ El scope de escritura debe solicitarse con su nombre tecnico `pedidos.write`. El
 
 Aplicacion Angular para Pedidos360. Implementa login con Microsoft Entra ID usando MSAL, rutas protegidas, catalogo de productos, carrito y pantalla para ver/copiar el access token.
 
+## EP5 Kafka
+
+La vista `Analitica` y el detalle de producto estan implementados, pero se
+ocultan con `kafkaEnabled: false` en ambos archivos de `src/environments/`
+hasta que el cluster Kafka y las rutas nuevas del API Gateway esten desplegados.
+No activar esta bandera solo para mostrar una pantalla vacia. Primero probar
+`GET /api/v1/productos/{id}`, `GET /api/v1/analitica/resumen`,
+`GET /api/v1/analitica/recomendaciones` y `POST /api/v1/pagos/simular` con un
+access token valido; despues cambiar `kafkaEnabled` a `true` en
+`environment.prod.ts` y reconstruir el contenedor EC2. El pago es simulado:
+no cobra dinero ni acepta numeros de tarjeta. El proceso completo esta en
+el [README EP5 del backend](https://github.com/Antonellacuvertino/pedidos360-backend/blob/main/docs/EP5_IMPLEMENTACION.md).
+
 ## Tecnologias
 
 - Angular 21

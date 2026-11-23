@@ -1,0 +1,45 @@
+<main class="streaming-page">
+  <header class="page-header">
+    <div>
+      <span class="section-label">Eventos</span>
+      <h1>Analitica</h1>
+    </div>
+    <button type="button" class="ghost" (click)="refresh()" title="Actualizar analitica" aria-label="Actualizar analitica">
+      <svg lucideRefreshCw size="18"></svg>
+    </button>
+  </header>
+
+  <p class="alert" *ngIf="error">{{ error }}</p>
+  <p class="loading" *ngIf="loading">Cargando...</p>
+
+  <section class="metrics" *ngIf="metrics">
+    <div><span>Vistas de productos</span><strong>{{ metrics.vistasProductos }}</strong></div>
+    <div><span>Intentos de pago</span><strong>{{ metrics.intentosPago }}</strong></div>
+    <div><span>Bloqueos</span><strong>{{ metrics.bloqueosFraude }}</strong></div>
+  </section>
+
+  <section class="layout">
+    <div class="recommendations">
+      <h2>Recomendaciones</h2>
+      <p *ngIf="recommendations?.categoria">Categoria: {{ recommendations?.categoria }}</p>
+      <p *ngIf="!recommendations?.categoria">Aun no hay vistas de productos.</p>
+      <ul *ngIf="recommendations?.productoIds?.length">
+        <li *ngFor="let id of recommendations?.productoIds">Producto #{{ id }}</li>
+      </ul>
+    </div>
+
+    <div class="payment">
+      <h2>Pago de prueba</h2>
+      <form [formGroup]="form" (ngSubmit)="pay()">
+        <label>Cliente<input formControlName="clienteId" autocomplete="off"></label>
+        <label>Pedido<input formControlName="pedidoId" autocomplete="off"></label>
+        <label>Monto<input type="number" min="1" formControlName="monto"></label>
+        <label>Token de prueba<input formControlName="metodoPagoToken" placeholder="demo_tarjeta01" autocomplete="off"></label>
+        <button type="submit" [disabled]="submitting">Simular pago</button>
+      </form>
+      <p class="result" *ngIf="lastPayment" [class.blocked]="lastPayment.estado === 'BLOQUEADO'">
+        {{ lastPayment.estado }} - {{ lastPayment.mensaje }}
+      </p>
+    </div>
+  </section>
+</main>

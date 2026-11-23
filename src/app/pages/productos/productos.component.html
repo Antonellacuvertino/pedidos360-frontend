@@ -29,12 +29,20 @@
         </div>
         <div class="product-actions">
           <strong>{{ producto.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
+          <button type="button" class="ghost" *ngIf="kafkaEnabled" (click)="verDetalle(producto)">
+            Ver detalle
+          </button>
           <button type="button" class="primary" (click)="agregarAlCarrito(producto)">
             <svg lucideShoppingCart size="18"></svg>
             Agregar
           </button>
         </div>
       </article>
+      <section class="detail" *ngIf="detalle && kafkaEnabled" aria-live="polite">
+        <h2>{{ detalle.nombre }}</h2>
+        <p>{{ detalle.categoria }} - {{ detalle.stock }} disponibles</p>
+        <strong>{{ detalle.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
+      </section>
     </div>
 
     <aside class="panel">

@@ -72,6 +72,31 @@ export interface ApiDemoResponse {
   [key: string]: unknown;
 }
 
+export interface AnalyticsMetrics {
+  vistasProductos: number;
+  intentosPago: number;
+  bloqueosFraude: number;
+}
+
+export interface Recommendations {
+  categoria: string | null;
+  productoIds: number[];
+}
+
+export interface PagoSimulado {
+  intentoId: string;
+  estado: 'APROBADO_SIMULADO' | 'BLOQUEADO';
+  mensaje: string;
+  fecha: string;
+}
+
+export interface PagoRequest {
+  clienteId: string;
+  pedidoId: string;
+  monto: number;
+  metodoPagoToken: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class Pedidos360ApiService {
   private readonly baseUrl = environment.apiBaseUrl;
@@ -97,6 +122,22 @@ export class Pedidos360ApiService {
 
   listarProductos(): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${this.apiUrl}/productos`);
+  }
+
+  detalleProducto(id: number): Observable<Producto> {
+    return this.http.get<Producto>(`${this.apiUrl}/productos/${id}`);
+  }
+
+  metricasAnalytics(): Observable<AnalyticsMetrics> {
+    return this.http.get<AnalyticsMetrics>(`${this.apiUrl}/analitica/resumen`);
+  }
+
+  recomendaciones(): Observable<Recommendations> {
+    return this.http.get<Recommendations>(`${this.apiUrl}/analitica/recomendaciones`);
+  }
+
+  simularPago(request: PagoRequest): Observable<PagoSimulado> {
+    return this.http.post<PagoSimulado>(`${this.apiUrl}/pagos/simular`, request);
   }
 
   crearProducto(request: NuevoProducto): Observable<Producto> {
