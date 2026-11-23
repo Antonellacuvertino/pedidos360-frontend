@@ -18,6 +18,16 @@
 
   <section class="grid">
     <div class="catalog">
+      <section *ngIf="kafkaEnabled && sugeridos.length" aria-label="Recomendaciones">
+        <h2>Para ti</h2>
+        <article class="product-card" *ngFor="let producto of sugeridos">
+          <div class="product-info"><span>{{ producto.categoria }}</span><h3>{{ producto.nombre }}</h3></div>
+          <button type="button" class="primary" (click)="agregarAlCarrito(producto)" [attr.aria-label]="'Agregar ' + producto.nombre">
+            <svg lucideShoppingCart size="18"></svg> Agregar
+          </button>
+        </article>
+      </section>
+      <p *ngIf="kafkaEnabled && recomendacionError" role="status">{{ recomendacionError }}</p>
       <article class="product-card" *ngFor="let producto of productos">
         <div class="product-icon">
           <svg lucidePackage size="24"></svg>

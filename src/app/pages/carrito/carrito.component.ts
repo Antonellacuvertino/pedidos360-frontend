@@ -1,7 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { forkJoin } from 'rxjs';
 import {
   LucideMinus,
   LucidePlus,
@@ -105,7 +105,7 @@ export class CarritoComponent implements OnInit {
   }
 
   confirmarPedido(): void {
-    if (this.items.length === 0 || this.form.invalid) {
+    if (this.enviando || this.items.length === 0 || this.form.invalid) {
       return;
     }
 
@@ -134,7 +134,7 @@ export class CarritoComponent implements OnInit {
     this.error = '';
     this.mensaje = '';
 
-    forkJoin(requests.map((request) => this.api.crearPedido(request))).subscribe({
+    this.api.crearCompra(requests).subscribe({
       next: (respuestas) => {
         this.comprobante = {
           fecha: new Date().toISOString(),
@@ -150,8 +150,10 @@ export class CarritoComponent implements OnInit {
         this.mensaje = 'Pedido aceptado. El procesamiento de la orden, el stock y la notificacion es asincrono.';
         this.enviando = false;
       },
-      error: () => {
-        this.error = 'No se confirmaron todos los productos. Revisa Pedidos recientes antes de reintentar: alguna solicitud pudo haberse aceptado.';
+      error: (error: HttpErrorResponse) => {
+        this.error = error.status === 429
+          ? 'Tu cuenta esta bloqueada temporalmente para comprar por intentos de pago reiterados. Espera 30 minutos.'
+          : 'No se confirmaron todos los productos. Revisa Pedidos recientes antes de reintentar: alguna solicitud pudo haberse aceptado.';
         this.enviando = false;
       }
     });

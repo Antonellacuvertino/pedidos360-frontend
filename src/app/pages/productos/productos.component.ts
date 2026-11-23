@@ -1,9 +1,10 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucidePackage, LucidePlus, LucideRefreshCw, LucideShoppingCart } from '@lucide/angular';
-import { finalize, timeout, TimeoutError } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, finalize, timer, timeout, TimeoutError } from 'rxjs';
 import { CarritoService } from '../../services/carrito.service';
 import { environment } from '../../../environments/environment';
 import { NuevoProducto, Pedidos360ApiService, Producto } from '../../services/pedidos360-api.service';
@@ -27,6 +28,9 @@ export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
   readonly kafkaEnabled = environment.kafkaEnabled;
   detalle?: Producto;
+  sugeridos: Producto[] = [];
+  recomendacionError = '';
+  private readonly destroyRef = inject(DestroyRef);
   cargando = false;
   error = '';
   mensaje = '';
@@ -46,6 +50,20 @@ export class ProductosComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarProductos();
+    if (this.kafkaEnabled) {
+      timer(1500, 4000).pipe(
+        exhaustMap(() => this.api.recomendaciones().pipe(timeout(8000), catchError(() => {
+          this.recomendacionError = 'Recomendaciones no disponibles temporalmente.';
+          return EMPTY;
+        }))),
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(resultado => {
+        this.recomendacionError = '';
+        this.sugeridos = resultado.productoIds
+          .map(id => this.productos.find(producto => producto.id === id))
+          .filter((producto): producto is Producto => !!producto);
+      });
+    }
   }
 
   cargarProductos(): void {
@@ -78,6 +96,10 @@ export class ProductosComponent implements OnInit {
   agregarAlCarrito(producto: Producto): void {
     this.carrito.agregar(producto);
     this.mensaje = `${producto.nombre} agregado al carrito.`;
+    if (this.kafkaEnabled) {
+      this.api.registrarCarrito(producto.id).pipe(timeout(8000), takeUntilDestroyed(this.destroyRef))
+        .subscribe({ error: () => this.recomendacionError = 'No se pudo registrar la seleccion para recomendaciones.' });
+    }
   }
 
   verDetalle(producto: Producto): void {
