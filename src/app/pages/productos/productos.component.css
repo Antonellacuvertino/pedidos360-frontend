@@ -1,5 +1,6 @@
 .productos-page {
   padding: 28px;
+  min-width: 0;
 }
 
 .page-header,
@@ -29,6 +30,7 @@
 
 h1,
 h2,
+h3,
 p {
   margin: 0;
 }
@@ -44,13 +46,40 @@ h1 {
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: minmax(0, 1fr) 300px;
   gap: 18px;
 }
 
 .catalog {
   display: grid;
   gap: 14px;
+  align-content: start;
+  min-width: 0;
+}
+
+.recommendations {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.recommendations > h2,
+.panel-title h2 {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.recommendation-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border-left: 3px solid #28735e;
+}
+
+.recommendation-card > button {
+  justify-self: end;
 }
 
 .detail {
@@ -67,6 +96,7 @@ h1 {
 }
 
 .product-card,
+.recommendation-card,
 .panel {
   background: white;
   border: 1px solid #d8e0e6;
@@ -75,15 +105,15 @@ h1 {
 
 .product-card {
   display: grid;
-  grid-template-columns: 54px 1fr auto;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
   gap: 16px;
   align-items: center;
   padding: 18px;
 }
 
 .product-icon {
-  width: 54px;
-  height: 54px;
+  width: 48px;
+  height: 48px;
   border-radius: 8px;
   background: #e8f6f0;
   color: #0f6f55;
@@ -98,8 +128,15 @@ h1 {
   font-weight: 800;
 }
 
-.product-info h2 {
-  font-size: 20px;
+.product-info {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.product-info h2,
+.product-info h3 {
+  font-size: 18px;
+  line-height: 1.4;
   margin: 4px 0;
 }
 
@@ -114,7 +151,8 @@ h1 {
 }
 
 .product-actions strong {
-  font-size: 20px;
+  font-size: 18px;
+  white-space: nowrap;
 }
 
 .panel {
@@ -144,6 +182,8 @@ label {
 
 input,
 select {
+  width: 100%;
+  min-width: 0;
   border: 1px solid #cbd5dd;
   border-radius: 8px;
   padding: 12px;
@@ -155,7 +195,7 @@ button {
   border: 0;
   border-radius: 8px;
   min-height: 42px;
-  padding: 0 14px;
+  padding: 10px 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -163,6 +203,23 @@ button {
   font: inherit;
   font-weight: 800;
   cursor: pointer;
+  line-height: 1.3;
+}
+
+button svg {
+  flex-shrink: 0;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.refresh-button {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 .primary {
@@ -203,20 +260,48 @@ button {
   border: 1px solid #ead89d;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1240px) {
   .productos-page {
     padding: 18px;
   }
 
-  .page-header,
-  .grid,
-  .product-card {
-    grid-template-columns: 1fr;
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .productos-page {
+    padding: 16px;
   }
 
-  .page-header,
+  h1 {
+    font-size: 28px;
+  }
+
+  .product-card {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
   .product-actions {
-    align-items: stretch;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-items: stretch;
+  }
+
+  .product-actions strong {
+    grid-column: 1 / -1;
+  }
+
+  .recommendation-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .recommendation-card > button {
+    justify-self: start;
   }
 }

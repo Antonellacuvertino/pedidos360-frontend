@@ -1,5 +1,50 @@
 # Frontend Pedidos360
 
+## Despliegue EP6 (25-11-2026)
+
+Aplicacion publicada en EC2: https://100-52-32-209.sslip.io
+
+Backend mediante API Gateway: https://l9xrwlo874.execute-api.us-east-1.amazonaws.com
+
+Produccion usa `environment.prod.ts` con Kafka habilitado. La usuaria confirmo
+inicio de sesion Microsoft, catalogo y Streaming en este laboratorio.
+La SPA debe registrar `https://100-52-32-209.sslip.io` en Entra.
+El dominio y los destinos privados de los paneles se configuran mediante `.env`
+en EC2; ver `.env.example`. RabbitMQ usa su autenticacion nativa y Kafka UI
+usa Basic Auth en Caddy, ambos por HTTPS. No guardar claves en Git.
+
+La [guia EP6 del backend](https://github.com/Antonellacuvertino/pedidos360-backend/blob/main/docs/DEMO_EP6_AWS.md)
+contiene arquitectura, pruebas, paneles y guion de presentacion.
+
+### Revision visual del catalogo
+
+La recomendacion tiene su propia distribucion de dos columnas, distinta de la
+tarjeta del catalogo. Los nombres pueden ocupar varias lineas y, en pantallas
+angostas, el formulario pasa debajo del catalogo. No se altero el flujo Kafka.
+
+`scripts/check-product-layout.cjs` comprueba solapamientos y desbordamientos en
+360, 390, 768, 1024, 1280 y 1440 px, con nombres normales y largos. Usa el HTML y
+CSS reales con datos de prueba; no sustituye las pruebas de login o de compras.
+Requiere Chrome y Playwright. Desde esta carpeta:
+
+```powershell
+npm install --prefix ../.tools/ui-check --no-audit --no-fund playwright
+$env:NODE_PATH = (Resolve-Path ../.tools/ui-check/node_modules).Path
+node scripts/check-product-layout.cjs
+```
+
+Las capturas quedan en `.artifacts/product-layout`, fuera de Git y Docker.
+
+## Ensayo local
+
+Con los servicios de `backend-pedidos360/deploy/compose.recorrido-local.yml`
+iniciados, ejecutar `npm run start:local` y abrir http://localhost:4200.
+Este perfil usa `environment.local.ts` y `proxy.local.json`, habilita
+recomendaciones y analitica, y mantiene el login Microsoft. No usa AWS
+API Gateway: es solo una prueba previa al despliegue, no la entrega cloud.
+Ver `backend-pedidos360/docs/RECORRIDO_LOCAL.md` para el paso a paso.
+Las direcciones siguientes corresponden al laboratorio anterior.
+
 Direccion HTTPS configurada para el frontend en EC2:
 
 ```text
@@ -29,14 +74,9 @@ Aplicacion Angular para Pedidos360. Implementa login con Microsoft Entra ID usan
 
 ## EP5 Kafka
 
-La vista `Analitica` y el detalle de producto estan implementados, pero se
-ocultan con `kafkaEnabled: false` en ambos archivos de `src/environments/`
-hasta que el cluster Kafka y las rutas nuevas del API Gateway esten desplegados.
-No activar esta bandera solo para mostrar una pantalla vacia. Primero probar
-`GET /api/v1/productos/{id}`, `GET /api/v1/analitica/resumen`,
-`GET /api/v1/analitica/recomendaciones` y `POST /api/v1/pagos/simular` con un
-access token valido; despues cambiar `kafkaEnabled` a `true` en
-`environment.prod.ts` y reconstruir el contenedor EC2. El pago es simulado:
+La vista `Analitica` y el detalle de producto estan habilitados en produccion.
+Las vistas y selecciones publican eventos; el backend consume Kafka y la
+interfaz consulta las recomendaciones. El pago es simulado:
 no cobra dinero ni acepta numeros de tarjeta. El proceso completo esta en
 el [README EP5 del backend](https://github.com/Antonellacuvertino/pedidos360-backend/blob/main/docs/EP5_IMPLEMENTACION.md).
 

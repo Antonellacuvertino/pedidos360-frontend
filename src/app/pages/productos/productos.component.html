@@ -3,11 +3,10 @@
     <div>
       <span class="section-label">Catalogo</span>
       <h1>Productos</h1>
-      <p>Consulta productos por GET y agrega productos al carrito para generar pedidos.</p>
+      <p>{{ productos.length }} productos</p>
     </div>
-    <button type="button" class="ghost" (click)="cargarProductos()">
+    <button type="button" class="ghost refresh-button" (click)="cargarProductos()" title="Actualizar productos" aria-label="Actualizar productos">
       <svg lucideRefreshCw size="18"></svg>
-      Actualizar
     </button>
   </header>
 
@@ -18,11 +17,15 @@
 
   <section class="grid">
     <div class="catalog">
-      <section *ngIf="kafkaEnabled && sugeridos.length" aria-label="Recomendaciones">
+      <section class="recommendations" *ngIf="kafkaEnabled && sugeridos.length" aria-label="Recomendaciones">
         <h2>Para ti</h2>
-        <article class="product-card" *ngFor="let producto of sugeridos">
-          <div class="product-info"><span>{{ producto.categoria }}</span><h3>{{ producto.nombre }}</h3></div>
-          <button type="button" class="primary" (click)="agregarAlCarrito(producto)" [attr.aria-label]="'Agregar ' + producto.nombre">
+        <article class="recommendation-card" *ngFor="let producto of sugeridos">
+          <div class="product-info">
+            <span>{{ producto.categoria }}</span>
+            <h3>{{ producto.nombre }}</h3>
+            <p>{{ producto.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }}</p>
+          </div>
+          <button type="button" class="primary" [disabled]="producto.stock <= 0" (click)="agregarAlCarrito(producto)" [attr.aria-label]="'Agregar ' + producto.nombre">
             <svg lucideShoppingCart size="18"></svg> Agregar
           </button>
         </article>
@@ -42,7 +45,7 @@
           <button type="button" class="ghost" *ngIf="kafkaEnabled" (click)="verDetalle(producto)">
             Ver detalle
           </button>
-          <button type="button" class="primary" (click)="agregarAlCarrito(producto)">
+          <button type="button" class="primary" [disabled]="producto.stock <= 0" (click)="agregarAlCarrito(producto)" [attr.aria-label]="'Agregar ' + producto.nombre">
             <svg lucideShoppingCart size="18"></svg>
             Agregar
           </button>
@@ -58,7 +61,6 @@
     <aside class="panel">
       <div class="panel-title">
         <h2>Nuevo producto</h2>
-        <span>POST protegido</span>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="crearProducto()">

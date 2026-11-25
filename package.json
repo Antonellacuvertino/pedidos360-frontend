@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "ng serve",
+    "start:local": "ng serve --configuration local --host localhost",
     "build": "ng build",
     "test": "ng test --watch=false"
   },

@@ -7,6 +7,8 @@ run.log
 run.err.log
 static.log
 static.err.log
+recorrido-local.*.log
+.artifacts/
 pedidos360-login.png
 .idea/
 .vscode/

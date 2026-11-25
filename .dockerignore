@@ -10,3 +10,4 @@ pedidos360-login.png
 **/.env.*
 **/*.pem
 **/*.key
+.artifacts/

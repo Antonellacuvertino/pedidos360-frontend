@@ -39,6 +39,16 @@
               ],
               "outputHashing": "all"
             },
+            "local": {
+              "optimization": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -55,6 +65,10 @@
             },
             "development": {
               "buildTarget": "frontend-pedidos360:build:development"
+            },
+            "local": {
+              "buildTarget": "frontend-pedidos360:build:local",
+              "proxyConfig": "proxy.local.json"
             }
           },
           "defaultConfiguration": "development"
