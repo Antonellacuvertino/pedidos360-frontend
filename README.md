@@ -25,6 +25,16 @@ tiempo acotado a analytics. Cuando llega el resultado de esa seleccion,
 **Para ti** aparece debajo del catalogo, sin productos que ya esten en el carrito.
 Abrir un detalle por si solo no activa el bloque.
 
+El pago de prueba esta solo en **Carrito**. La tarjeta rechazada permite
+reintentar sin vaciarlo ni generar un comprobante. Un tercer intento en menos
+de diez segundos devuelve 429. **Analitica** muestra actividad y complementos
+con foto, nombre y precio; no tiene formulario de pago.
+
+Las [imagenes de referencia](src/assets/catalogo/) son simuladas: una plancha
+generada con la herramienta integrada de imagenes y exportada a tres JPEG.
+Prompt: fotografias de estudio, fondo gris claro, notebook negro abierto,
+monitor de 27 pulgadas y mouse ergonomico oscuro, sin logotipos ni texto.
+
 La recomendacion tiene su propia distribucion de dos columnas, distinta de la
 tarjeta del catalogo. Los nombres pueden ocupar varias lineas y, en pantallas
 angostas, el formulario pasa debajo del catalogo. No se altero el flujo Kafka.

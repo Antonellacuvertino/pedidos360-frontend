@@ -1,45 +1,41 @@
-<main class="streaming-page">
+<main class="streaming-page" [attr.aria-busy]="loading">
   <header class="page-header">
     <div>
-      <span class="section-label">Eventos</span>
-      <h1>Analitica</h1>
+      <span class="section-label">Actividad</span>
+      <h1>Analítica</h1>
     </div>
-    <button type="button" class="ghost" (click)="refresh()" title="Actualizar analitica" aria-label="Actualizar analitica">
+    <button type="button" class="ghost" [disabled]="loading" (click)="refresh()" title="Actualizar actividad" aria-label="Actualizar actividad">
       <svg lucideRefreshCw size="18"></svg>
     </button>
   </header>
 
-  <p class="alert" *ngIf="error">{{ error }}</p>
-  <p class="loading" *ngIf="loading">Cargando...</p>
-
-  <section class="metrics" *ngIf="metrics">
-    <div><span>Vistas de productos</span><strong>{{ metrics.vistasProductos }}</strong></div>
-    <div><span>Intentos de pago</span><strong>{{ metrics.intentosPago }}</strong></div>
-    <div><span>Bloqueos</span><strong>{{ metrics.bloqueosFraude }}</strong></div>
+  <p class="alert" *ngIf="error" role="alert">{{ error }}</p>
+  <section class="metrics" *ngIf="metrics as stats" aria-label="Indicadores de actividad">
+    <div><span>Interacciones con productos</span><strong>{{ stats.vistasProductos }}</strong></div>
+    <div><span>Intentos de pago</span><strong>{{ stats.intentosPago }}</strong></div>
+    <div><span>Intentos bloqueados</span><strong>{{ stats.bloqueosFraude }}</strong></div>
   </section>
 
-  <section class="layout">
-    <div class="recommendations">
-      <h2>Recomendaciones</h2>
-      <p *ngIf="recommendations?.categoria">Categoria: {{ recommendations?.categoria }}</p>
-      <p *ngIf="!recommendations?.categoria">Aun no hay vistas de productos.</p>
-      <ul *ngIf="recommendations?.productoIds?.length">
-        <li *ngFor="let id of recommendations?.productoIds">Producto #{{ id }}</li>
-      </ul>
-    </div>
-
-    <div class="payment">
-      <h2>Pago de prueba</h2>
-      <form [formGroup]="form" (ngSubmit)="pay()">
-        <label>Cliente<input formControlName="clienteId" autocomplete="off"></label>
-        <label>Pedido<input formControlName="pedidoId" autocomplete="off"></label>
-        <label>Monto<input type="number" min="1" formControlName="monto"></label>
-        <label>Token de prueba<input formControlName="metodoPagoToken" placeholder="demo_tarjeta01" autocomplete="off"></label>
-        <button type="submit" [disabled]="submitting">Simular pago</button>
-      </form>
-      <p class="result" *ngIf="lastPayment" [class.blocked]="lastPayment.estado === 'BLOQUEADO'">
-        {{ lastPayment.estado }} - {{ lastPayment.mensaje }}
-      </p>
-    </div>
+  <section class="recommendations" aria-labelledby="suggestions-title">
+    <h2 id="suggestions-title">Para ti</h2>
+    @if (sugeridos.length && productoBase; as base) {
+      <p>{{ desdePedido ? 'A partir de tu pedido' : 'A partir de tu selección' }} de <strong>{{ base.nombre }}</strong>, te recomendamos estos productos.</p>
+      <div class="suggestion-grid">
+        <article class="suggestion-card" *ngFor="let producto of sugeridos">
+          <app-product-image [name]="producto.nombre"></app-product-image>
+          <div>
+            <span>{{ producto.categoria }}</span>
+            <h3>{{ producto.nombre }}</h3>
+            <strong>{{ producto.precio | currency:'CLP':'symbol-narrow':'1.0-0' }}</strong>
+          </div>
+        </article>
+      </div>
+      <a class="catalog-link" routerLink="/app/productos">Ver catálogo</a>
+    } @else if (!loading) {
+      <p>{{ recomendacionesNoDisponibles ? 'No pudimos consultar las recomendaciones.'
+        : productoBase ? 'No hay otros complementos disponibles para tu selección.'
+        : 'Todavía no hay recomendaciones para tu carrito.' }}</p>
+      <a class="catalog-link" routerLink="/app/productos">Ver catálogo</a>
+    }
   </section>
 </main>

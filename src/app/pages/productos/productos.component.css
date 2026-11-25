@@ -76,7 +76,7 @@ h1 {
 
 .recommendation-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 80px minmax(0, 1fr) auto;
   gap: 16px;
   align-items: center;
   padding: 18px;
@@ -110,20 +110,10 @@ h1 {
 
 .product-card {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-columns: 104px minmax(0, 1fr) auto;
   gap: 16px;
   align-items: center;
   padding: 18px;
-}
-
-.product-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  background: #e8f6f0;
-  color: #0f6f55;
-  display: grid;
-  place-items: center;
 }
 
 .product-info span,
@@ -285,7 +275,7 @@ button:disabled {
   }
 
   .product-card {
-    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     gap: 12px;
     padding: 16px;
   }
@@ -301,12 +291,13 @@ button:disabled {
   }
 
   .recommendation-card {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     gap: 12px;
     padding: 16px;
   }
 
   .recommendation-card > button {
+    grid-column: 2;
     justify-self: start;
   }
 }

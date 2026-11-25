@@ -1,84 +1,61 @@
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { LucideRefreshCw } from '@lucide/angular';
-import { forkJoin } from 'rxjs';
-import {
-  AnalyticsMetrics,
-  PagoSimulado,
-  Pedidos360ApiService,
-  Recommendations
-} from '../../services/pedidos360-api.service';
+import { catchError, finalize, forkJoin, of, timeout } from 'rxjs';
+import { CarritoService } from '../../services/carrito.service';
+import { AnalyticsMetrics, Pedidos360ApiService, Producto } from '../../services/pedidos360-api.service';
+import { ProductImageComponent } from '../../shared/product-image.component';
 
 @Component({
   selector: 'app-streaming',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideRefreshCw],
+  imports: [CommonModule, ProductImageComponent, RouterLink, LucideRefreshCw],
   templateUrl: './streaming.component.html',
   styleUrl: './streaming.component.css'
 })
 export class StreamingComponent implements OnInit {
-  metrics?: AnalyticsMetrics;
-  recommendations?: Recommendations;
-  lastPayment?: PagoSimulado;
+  metrics: AnalyticsMetrics | null = null;
+  sugeridos: Producto[] = [];
+  productoBase?: Producto;
+  desdePedido = false;
   loading = false;
-  submitting = false;
   error = '';
+  recomendacionesNoDisponibles = false;
+  private readonly destroyRef = inject(DestroyRef);
 
-  form = this.fb.nonNullable.group({
-    clienteId: ['', Validators.required],
-    pedidoId: ['', Validators.required],
-    monto: [1000, [Validators.required, Validators.min(1)]],
-    metodoPagoToken: ['', [Validators.required, Validators.pattern(/^demo_[A-Za-z0-9_-]{4,64}$/)]]
-  });
-
-  constructor(private readonly api: Pedidos360ApiService, private readonly fb: FormBuilder) {}
+  constructor(private readonly api: Pedidos360ApiService, private readonly carrito: CarritoService) {}
 
   ngOnInit(): void {
     this.refresh();
   }
 
   refresh(): void {
+    if (this.loading) return;
     this.loading = true;
-    forkJoin({
-      metrics: this.api.metricasAnalytics(),
-      recommendations: this.api.recomendaciones()
-    }).subscribe({
-      next: ({ metrics, recommendations }) => {
-        this.metrics = metrics;
-        this.recommendations = recommendations;
-        this.error = '';
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'No se pudo consultar analitica desde API Gateway.';
-        this.loading = false;
-      }
-    });
-  }
-
-  pay(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    this.submitting = true;
     this.error = '';
-    this.api.simularPago(this.form.getRawValue()).subscribe({
-      next: (payment) => {
-        this.lastPayment = payment;
-        this.submitting = false;
-        this.refresh();
-      },
-      error: (error: unknown) => {
-        if (error instanceof HttpErrorResponse && error.status === 429 && error.error?.estado === 'BLOQUEADO') {
-          this.lastPayment = error.error as PagoSimulado;
-        } else {
-          this.error = 'No se pudo registrar el intento de pago.';
-        }
-        this.submitting = false;
-      }
+    forkJoin({
+      metrics: this.api.metricasAnalytics().pipe(timeout(10000), catchError(() => of(null))),
+      suggestions: this.api.recomendaciones().pipe(timeout(10000), catchError(() => of(null))),
+      products: this.api.listarProductos().pipe(timeout(10000), catchError(() => of(null)))
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.loading = false)
+    ).subscribe(({ metrics, suggestions, products }) => {
+      this.metrics = metrics;
+      if (!metrics) this.error = 'No pudimos actualizar la actividad.';
+      this.recomendacionesNoDisponibles = suggestions === null || products === null;
+      const catalog = new Map(products?.map(product => [product.id, product]));
+      const currentCart = this.carrito.obtenerItems().map(item => item.producto.id);
+      const lastOrder = this.carrito.ultimoComprobante()?.lineas ?? [];
+      const fromOrder = suggestions?.productoBaseId != null &&
+        lastOrder.some(item => item.productoId === suggestions.productoBaseId);
+      const excluded = new Set([...currentCart, ...(fromOrder ? lastOrder.map(item => item.productoId) : [])]);
+      this.productoBase = catalog.get(suggestions?.productoBaseId ?? 0);
+      this.desdePedido = fromOrder && !currentCart.includes(this.productoBase?.id ?? 0);
+      this.sugeridos = (suggestions?.productoIds ?? []).map(id => catalog.get(id))
+        .filter((p): p is Producto => !!p && p.stock > 0 && !excluded.has(p.id)).slice(0, 3);
     });
   }
 }

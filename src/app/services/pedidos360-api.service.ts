@@ -84,20 +84,6 @@ export interface Recommendations {
   productoBaseId: number | null;
 }
 
-export interface PagoSimulado {
-  intentoId: string;
-  estado: 'APROBADO_SIMULADO' | 'BLOQUEADO';
-  mensaje: string;
-  fecha: string;
-}
-
-export interface PagoRequest {
-  clienteId: string;
-  pedidoId: string;
-  monto: number;
-  metodoPagoToken: string;
-}
-
 @Injectable({ providedIn: 'root' })
 export class Pedidos360ApiService {
   private readonly baseUrl = environment.apiBaseUrl;
@@ -141,10 +127,6 @@ export class Pedidos360ApiService {
     return this.http.post<void>(`${this.apiUrl}/productos/${id}/interacciones`, { accion: 'CARRITO' });
   }
 
-  simularPago(request: PagoRequest): Observable<PagoSimulado> {
-    return this.http.post<PagoSimulado>(`${this.apiUrl}/pagos/simular`, request);
-  }
-
   crearProducto(request: NuevoProducto): Observable<Producto> {
     return this.http.post<Producto>(`${this.apiUrl}/productos`, request);
   }
@@ -165,7 +147,7 @@ export class Pedidos360ApiService {
     return this.http.post<PedidoAceptado>(`${this.apiUrl}/pedidos`, request);
   }
 
-  crearCompra(items: NuevoPedido[]): Observable<PedidoAceptado[]> {
-    return this.http.post<PedidoAceptado[]>(`${this.apiUrl}/pedidos/lote`, { items });
+  crearCompra(items: NuevoPedido[], rechazoSimulado: boolean): Observable<PedidoAceptado[]> {
+    return this.http.post<PedidoAceptado[]>(`${this.apiUrl}/pedidos/lote`, { items, rechazoSimulado });
   }
 }

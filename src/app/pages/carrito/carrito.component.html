@@ -3,12 +3,10 @@
     <div>
       <span class="section-label">Venta</span>
       <h1>Carrito</h1>
-      <p>Confirma productos seleccionados y genera pedidos protegidos por JWT.</p>
     </div>
   </header>
 
-  <p class="alert" *ngIf="error">{{ error }}</p>
-  <p class="success" *ngIf="mensaje">{{ mensaje }}</p>
+  <p class="success" *ngIf="mensaje" role="status">{{ mensaje }}</p>
 
   <section class="grid">
     <div class="panel">
@@ -20,41 +18,52 @@
       <div class="empty" *ngIf="items.length === 0">
         <svg lucideShoppingCart size="32"></svg>
         <strong>El carrito esta vacio</strong>
-        <span>Agrega productos desde la pantalla de catalogo.</span>
+        <a routerLink="/app/productos">Ver productos</a>
       </div>
 
       <article class="cart-item" *ngFor="let item of items">
-        <div>
+        <div class="cart-product">
+          <app-product-image [name]="item.producto.nombre"></app-product-image>
+          <div>
           <strong>{{ item.producto.nombre }}</strong>
           <span>{{ item.producto.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }} c/u</span>
+          </div>
         </div>
         <div class="quantity">
-          <button type="button" class="icon" (click)="disminuir(item)">
+          <button type="button" class="icon" [disabled]="enviando" aria-label="Disminuir cantidad" (click)="disminuir(item)">
             <svg lucideMinus size="16"></svg>
           </button>
           <strong>{{ item.cantidad }}</strong>
-          <button type="button" class="icon" (click)="aumentar(item)">
+          <button type="button" class="icon" [disabled]="enviando || item.cantidad >= item.producto.stock" aria-label="Aumentar cantidad" (click)="aumentar(item)">
             <svg lucidePlus size="16"></svg>
           </button>
         </div>
         <strong>{{ item.producto.precio * item.cantidad | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
-        <button type="button" class="delete" (click)="quitar(item)">
+        <button type="button" class="delete" [disabled]="enviando" aria-label="Quitar producto" (click)="quitar(item)">
           <svg lucideTrash2 size="17"></svg>
         </button>
       </article>
     </div>
 
-    <aside class="panel summary">
+    <aside class="panel summary" *ngIf="items.length">
       <div class="panel-title">
-        <h2>Resumen</h2>
-        <span>POST /pedidos</span>
+        <h2>Pago de prueba</h2>
+        <span>Sin cobro real</span>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="confirmarPedido()">
+      <form [formGroup]="form" (ngSubmit)="confirmarPedido()" [attr.aria-busy]="enviando">
         <label>
           Cliente
           <select formControlName="clienteId">
             <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }}</option>
+          </select>
+        </label>
+
+        <label>
+          Tarjeta de prueba
+          <select formControlName="rechazoSimulado">
+            <option [ngValue]="false">Tarjeta aprobada</option>
+            <option [ngValue]="true">Tarjeta rechazada</option>
           </select>
         </label>
 
@@ -63,20 +72,21 @@
           <strong>{{ total() | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
         </div>
 
-        <button type="submit" class="primary" [disabled]="items.length === 0 || enviando">
+        <p class="alert" *ngIf="error" role="alert">{{ error }}</p>
+        <button type="submit" class="primary" [disabled]="form.invalid || enviando">
           <svg lucideShoppingCart size="18"></svg>
-          Confirmar pedido
+          {{ enviando ? 'Procesando pago' : 'Pagar pedido' }}
         </button>
       </form>
     </aside>
   </section>
 
-  <section class="receipt" *ngIf="comprobante as recibo">
+  <section class="receipt" *ngIf="!items.length && comprobante as recibo">
     <div class="receipt-heading">
       <div>
         <span class="section-label">Pedidos360</span>
         <h2>Comprobante de pedido</h2>
-        <p>Confirmacion de solicitud. No es una boleta tributaria ni acredita un pago.</p>
+        <p>Pago de prueba aprobado. No hubo cobro real.</p>
       </div>
       <button type="button" class="print-button receipt-actions" (click)="imprimirComprobante()">
         <svg lucidePrinter size="18"></svg>

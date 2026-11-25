@@ -7,9 +7,23 @@ export interface ItemCarrito {
   cantidad: number;
 }
 
+export interface ComprobantePedido {
+  fecha: string;
+  cliente: string;
+  lineas: {
+    productoId?: number;
+    producto: string;
+    cantidad: number;
+    precioUnitario: number;
+    eventoId: string;
+  }[];
+  total: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
   private readonly storageKey = 'pedidos360_carrito';
+  private readonly comprobanteKey = 'pedidos360_ultimo_comprobante';
   private readonly itemsSubject = new BehaviorSubject<ItemCarrito[]>(this.leerStorage());
   readonly items$ = this.itemsSubject.asObservable();
 
@@ -51,6 +65,21 @@ export class CarritoService {
 
   cantidadTotal(): number {
     return this.itemsSubject.value.reduce((total, item) => total + item.cantidad, 0);
+  }
+
+  ultimoComprobante(): ComprobantePedido | null {
+    const raw = sessionStorage.getItem(this.comprobanteKey);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as ComprobantePedido;
+    } catch {
+      sessionStorage.removeItem(this.comprobanteKey);
+      return null;
+    }
+  }
+
+  guardarComprobante(comprobante: ComprobantePedido): void {
+    sessionStorage.setItem(this.comprobanteKey, JSON.stringify(comprobante));
   }
 
   private guardar(items: ItemCarrito[]): void {

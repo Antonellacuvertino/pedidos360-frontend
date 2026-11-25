@@ -17,9 +17,7 @@
   <section class="grid">
     <div class="catalog">
       <article class="product-card" *ngFor="let producto of productos">
-        <div class="product-icon">
-          <svg lucidePackage size="24"></svg>
-        </div>
+        <app-product-image [name]="producto.nombre"></app-product-image>
         <div class="product-info">
           <span>{{ producto.categoria }}</span>
           <h2>{{ producto.nombre }}</h2>
@@ -43,8 +41,9 @@
       </section>
       <section class="recommendations" *ngIf="sugeridos.length" aria-labelledby="recommendation-title">
         <h2 id="recommendation-title">Para ti</h2>
-        <p class="duo-caption">Completa tu selección de {{ productoBase?.nombre }}</p>
+        <p class="duo-caption">Si llevas {{ productoBase?.nombre }}, estos productos pueden completar tu compra.</p>
         <article class="recommendation-card" *ngFor="let producto of sugeridos">
+          <app-product-image [name]="producto.nombre"></app-product-image>
           <div class="product-info">
             <span>{{ producto.categoria }}</span>
             <h3>{{ producto.nombre }}</h3>

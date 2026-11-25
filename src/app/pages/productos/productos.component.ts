@@ -3,7 +3,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LucidePackage, LucidePlus, LucideRefreshCw, LucideShoppingCart } from '@lucide/angular';
+import { LucidePlus, LucideRefreshCw, LucideShoppingCart } from '@lucide/angular';
+import { ProductImageComponent } from '../../shared/product-image.component';
 import { catchError, EMPTY, exhaustMap, filter, finalize, retry, Subject, switchMap, take, throwError, timer, timeout, TimeoutError } from 'rxjs';
 import { CarritoService } from '../../services/carrito.service';
 import { environment } from '../../../environments/environment';
@@ -16,7 +17,7 @@ import { NuevoProducto, Pedidos360ApiService, Producto } from '../../services/pe
     CommonModule,
     ReactiveFormsModule,
     CurrencyPipe,
-    LucidePackage,
+    ProductImageComponent,
     LucidePlus,
     LucideRefreshCw,
     LucideShoppingCart

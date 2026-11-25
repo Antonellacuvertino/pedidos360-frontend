@@ -1,7 +1,9 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   LucideMinus,
   LucidePlus,
@@ -9,22 +11,9 @@ import {
   LucideShoppingCart,
   LucideTrash2
 } from '@lucide/angular';
-import { CarritoService, ItemCarrito } from '../../services/carrito.service';
+import { CarritoService, ComprobantePedido, ItemCarrito } from '../../services/carrito.service';
 import { Cliente, NuevoPedido, Pedidos360ApiService } from '../../services/pedidos360-api.service';
-
-interface LineaComprobante {
-  producto: string;
-  cantidad: number;
-  precioUnitario: number;
-  eventoId: string;
-}
-
-interface ComprobantePedido {
-  fecha: string;
-  cliente: string;
-  lineas: LineaComprobante[];
-  total: number;
-}
+import { ProductImageComponent } from '../../shared/product-image.component';
 
 @Component({
   selector: 'app-carrito',
@@ -33,6 +22,8 @@ interface ComprobantePedido {
     CommonModule,
     ReactiveFormsModule,
     CurrencyPipe,
+    ProductImageComponent,
+    RouterLink,
     LucideMinus,
     LucidePlus,
     LucidePrinter,
@@ -49,10 +40,11 @@ export class CarritoComponent implements OnInit {
   mensaje = '';
   enviando = false;
   comprobante: ComprobantePedido | null = null;
-  private readonly comprobanteKey = 'pedidos360_ultimo_comprobante';
+  private readonly destroyRef = inject(DestroyRef);
 
   form = this.fb.nonNullable.group({
-    clienteId: [1, [Validators.required, Validators.min(1)]]
+    clienteId: [0, [Validators.required, Validators.min(1)]],
+    rechazoSimulado: [false]
   });
 
   constructor(
@@ -62,20 +54,13 @@ export class CarritoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const guardado = sessionStorage.getItem(this.comprobanteKey);
-    if (guardado) {
-      try {
-        this.comprobante = JSON.parse(guardado) as ComprobantePedido;
-      } catch {
-        sessionStorage.removeItem(this.comprobanteKey);
-      }
-    }
+    this.comprobante = this.carrito.ultimoComprobante();
 
-    this.carrito.items$.subscribe((items) => {
+    this.carrito.items$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((items) => {
       this.items = items;
     });
 
-    this.api.listarClientes().subscribe({
+    this.api.listarClientes().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (clientes) => {
         this.clientes = clientes;
         if (clientes[0]) {
@@ -109,7 +94,7 @@ export class CarritoComponent implements OnInit {
       return;
     }
 
-    const clienteId = this.form.getRawValue().clienteId;
+    const { clienteId, rechazoSimulado } = this.form.getRawValue();
     const cliente = this.clientes.find((actual) => actual.id === clienteId);
     if (!cliente) {
       this.error = 'Selecciona un cliente antes de confirmar.';
@@ -117,6 +102,7 @@ export class CarritoComponent implements OnInit {
     }
 
     const itemsConfirmados = this.items.map((item) => ({
+      productoId: item.producto.id,
       producto: item.producto.nombre,
       cantidad: item.cantidad,
       precioUnitario: item.producto.precio
@@ -133,8 +119,9 @@ export class CarritoComponent implements OnInit {
     this.enviando = true;
     this.error = '';
     this.mensaje = '';
+    this.comprobante = null;
 
-    this.api.crearCompra(requests).subscribe({
+    this.api.crearCompra(requests, rechazoSimulado).subscribe({
       next: (respuestas) => {
         this.comprobante = {
           fecha: new Date().toISOString(),
@@ -145,15 +132,17 @@ export class CarritoComponent implements OnInit {
           })),
           total: itemsConfirmados.reduce((total, item) => total + item.precioUnitario * item.cantidad, 0)
         };
-        sessionStorage.setItem(this.comprobanteKey, JSON.stringify(this.comprobante));
+        this.carrito.guardarComprobante(this.comprobante);
         this.carrito.limpiar();
-        this.mensaje = 'Pedido aceptado. El procesamiento de la orden, el stock y la notificacion es asincrono.';
+        this.mensaje = 'Pago de prueba aprobado. Tu pedido fue recibido.';
         this.enviando = false;
       },
       error: (error: HttpErrorResponse) => {
         this.error = error.status === 429
           ? 'Tu cuenta esta bloqueada temporalmente para comprar por intentos de pago reiterados. Espera 30 minutos.'
-          : 'No se confirmaron todos los productos. Revisa Pedidos recientes antes de reintentar: alguna solicitud pudo haberse aceptado.';
+          : error.status === 402
+            ? 'La tarjeta de prueba fue rechazada. Puedes reintentar; tus productos siguen en el carrito.'
+            : 'No pudimos confirmar el pago. Revisa tus pedidos antes de reintentar.';
         this.enviando = false;
       }
     });
