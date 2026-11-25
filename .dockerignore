@@ -4,3 +4,9 @@ dist
 .git
 *.log
 pedidos360-login.png
+.env
+.env.*
+**/.env
+**/.env.*
+**/*.pem
+**/*.key

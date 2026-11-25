@@ -1,6 +1,20 @@
-100-48-142-195.sslip.io {
+{$FRONTEND_DOMAIN} {
     root * /srv
     encode zstd gzip
     try_files {path} /index.html
     file_server
+}
+
+rabbit.{$FRONTEND_DOMAIN} {
+    basic_auth {
+        pedidos360 {$ADMIN_PASSWORD_HASH}
+    }
+    reverse_proxy {$RABBIT_ADMIN_URL}
+}
+
+kafka.{$FRONTEND_DOMAIN} {
+    basic_auth {
+        pedidos360 {$ADMIN_PASSWORD_HASH}
+    }
+    reverse_proxy {$KAFKA_ADMIN_URL}
 }

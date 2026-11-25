@@ -2,6 +2,11 @@ services:
   frontend:
     build: .
     restart: unless-stopped
+    environment:
+      FRONTEND_DOMAIN: ${FRONTEND_DOMAIN:?Define FRONTEND_DOMAIN}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:?Define ADMIN_PASSWORD_HASH}
+      RABBIT_ADMIN_URL: ${RABBIT_ADMIN_URL:?Define RABBIT_ADMIN_URL}
+      KAFKA_ADMIN_URL: ${KAFKA_ADMIN_URL:?Define KAFKA_ADMIN_URL}
     ports:
       - "80:80"
       - "443:443"
