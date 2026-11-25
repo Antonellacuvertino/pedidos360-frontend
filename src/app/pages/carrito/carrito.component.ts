@@ -44,7 +44,7 @@ export class CarritoComponent implements OnInit {
 
   form = this.fb.nonNullable.group({
     clienteId: [0, [Validators.required, Validators.min(1)]],
-    rechazoSimulado: [false]
+    tarjetaPrueba: ['', [Validators.required, Validators.pattern(/^0000 ?0000 ?0000 ?000[1-9]$/)]]
   });
 
   constructor(
@@ -94,7 +94,7 @@ export class CarritoComponent implements OnInit {
       return;
     }
 
-    const { clienteId, rechazoSimulado } = this.form.getRawValue();
+    const { clienteId, tarjetaPrueba } = this.form.getRawValue();
     const cliente = this.clientes.find((actual) => actual.id === clienteId);
     if (!cliente) {
       this.error = 'Selecciona un cliente antes de confirmar.';
@@ -121,7 +121,7 @@ export class CarritoComponent implements OnInit {
     this.mensaje = '';
     this.comprobante = null;
 
-    this.api.crearCompra(requests, rechazoSimulado).subscribe({
+    this.api.crearCompra(requests, tarjetaPrueba.replace(/ /g, '')).subscribe({
       next: (respuestas) => {
         this.comprobante = {
           fecha: new Date().toISOString(),
@@ -134,12 +134,13 @@ export class CarritoComponent implements OnInit {
         };
         this.carrito.guardarComprobante(this.comprobante);
         this.carrito.limpiar();
+        this.form.controls.tarjetaPrueba.reset();
         this.mensaje = 'Pago de prueba aprobado. Tu pedido fue recibido.';
         this.enviando = false;
       },
       error: (error: HttpErrorResponse) => {
         this.error = error.status === 429
-          ? 'Tu cuenta esta bloqueada temporalmente para comprar por intentos de pago reiterados. Espera 30 minutos.'
+          ? 'Esta tarjeta de prueba quedó bloqueada por 30 minutos por intentos reiterados.'
           : error.status === 402
             ? 'La tarjeta de prueba fue rechazada. Puedes reintentar; tus productos siguen en el carrito.'
             : 'No pudimos confirmar el pago. Revisa tus pedidos antes de reintentar.';

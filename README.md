@@ -25,9 +25,11 @@ tiempo acotado a analytics. Cuando llega el resultado de esa seleccion,
 **Para ti** aparece debajo del catalogo, sin productos que ya esten en el carrito.
 Abrir un detalle por si solo no activa el bloque.
 
-El pago de prueba esta solo en **Carrito**. La tarjeta rechazada permite
-reintentar sin vaciarlo ni generar un comprobante. Un tercer intento en menos
-de diez segundos devuelve 429. **Analitica** muestra actividad y complementos
+El pago de prueba esta solo en **Carrito**. Ingresa `0000 0000 0000 0001`
+para una aprobacion o `0000 0000 0000 0002` para simular rechazos. El cuarto
+intento con el mismo numero ficticio dentro de 10 segundos bloquea esa tarjeta
+con 429. Un rechazo no vacia el carrito ni genera comprobante. No se aceptan
+tarjetas reales. **Analitica** muestra actividad y complementos
 con foto, nombre y precio; no tiene formulario de pago.
 
 Las [imagenes de referencia](src/assets/catalogo/) son simuladas: una plancha

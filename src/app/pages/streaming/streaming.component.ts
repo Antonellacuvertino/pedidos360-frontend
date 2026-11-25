@@ -20,6 +20,7 @@ export class StreamingComponent implements OnInit {
   sugeridos: Producto[] = [];
   productoBase?: Producto;
   desdePedido = false;
+  desdeVista = false;
   loading = false;
   error = '';
   recomendacionesNoDisponibles = false;
@@ -54,6 +55,7 @@ export class StreamingComponent implements OnInit {
       const excluded = new Set([...currentCart, ...(fromOrder ? lastOrder.map(item => item.productoId) : [])]);
       this.productoBase = catalog.get(suggestions?.productoBaseId ?? 0);
       this.desdePedido = fromOrder && !currentCart.includes(this.productoBase?.id ?? 0);
+      this.desdeVista = suggestions?.accionBase === 'VISTA';
       this.sugeridos = (suggestions?.productoIds ?? []).map(id => catalog.get(id))
         .filter((p): p is Producto => !!p && p.stock > 0 && !excluded.has(p.id)).slice(0, 3);
     });

@@ -56,7 +56,7 @@ export class ProductosComponent implements OnInit {
       this.seleccion.pipe(
         switchMap(producto => timer(400, 1000).pipe(
           take(12),
-          exhaustMap(() => this.api.recomendaciones().pipe(timeout(5500), catchError(() => EMPTY))),
+          exhaustMap(() => this.api.recomendaciones(true).pipe(timeout(5500), catchError(() => EMPTY))),
           filter(result => result.productoBaseId === producto.id && this.productoBase === producto),
           take(1)
         )),

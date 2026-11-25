@@ -19,7 +19,7 @@
   <section class="recommendations" aria-labelledby="suggestions-title">
     <h2 id="suggestions-title">Para ti</h2>
     @if (sugeridos.length && productoBase; as base) {
-      <p>{{ desdePedido ? 'A partir de tu pedido' : 'A partir de tu selección' }} de <strong>{{ base.nombre }}</strong>, te recomendamos estos productos.</p>
+      <p>{{ desdeVista ? 'Después de ver' : desdePedido ? 'A partir de tu pedido de' : 'A partir de tu selección de' }} <strong>{{ base.nombre }}</strong>, te recomendamos estos productos.</p>
       <div class="suggestion-grid">
         <article class="suggestion-card" *ngFor="let producto of sugeridos">
           <app-product-image [name]="producto.nombre"></app-product-image>
@@ -34,7 +34,7 @@
     } @else if (!loading) {
       <p>{{ recomendacionesNoDisponibles ? 'No pudimos consultar las recomendaciones.'
         : productoBase ? 'No hay otros complementos disponibles para tu selección.'
-        : 'Todavía no hay recomendaciones para tu carrito.' }}</p>
+        : 'Todavía no hay recomendaciones para tu actividad.' }}</p>
       <a class="catalog-link" routerLink="/app/productos">Ver catálogo</a>
     }
   </section>

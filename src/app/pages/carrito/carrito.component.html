@@ -60,11 +60,10 @@
         </label>
 
         <label>
-          Tarjeta de prueba
-          <select formControlName="rechazoSimulado">
-            <option [ngValue]="false">Tarjeta aprobada</option>
-            <option [ngValue]="true">Tarjeta rechazada</option>
-          </select>
+          Número de tarjeta ficticia
+          <input type="text" formControlName="tarjetaPrueba" inputmode="numeric" autocomplete="off"
+            maxlength="19" placeholder="0000 0000 0000 0001" aria-describedby="tarjeta-ayuda">
+          <small id="tarjeta-ayuda">Usa solo los números de prueba de Pedidos360. Nunca ingreses una tarjeta real.</small>
         </label>
 
         <div class="total-row">

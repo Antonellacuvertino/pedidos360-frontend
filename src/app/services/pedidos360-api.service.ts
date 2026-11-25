@@ -35,6 +35,7 @@ export interface NuevoPedido {
   total: number;
   estado: string;
   email?: string;
+  tarjetaPrueba?: string;
 }
 
 export interface PedidoAceptado {
@@ -82,6 +83,7 @@ export interface Recommendations {
   categoria: string | null;
   productoIds: number[];
   productoBaseId: number | null;
+  accionBase: 'VISTA' | 'CARRITO' | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -119,8 +121,9 @@ export class Pedidos360ApiService {
     return this.http.get<AnalyticsMetrics>(`${this.apiUrl}/analitica/resumen`);
   }
 
-  recomendaciones(): Observable<Recommendations> {
-    return this.http.get<Recommendations>(`${this.apiUrl}/analitica/recomendaciones`);
+  recomendaciones(soloCarrito = false): Observable<Recommendations> {
+    return this.http.get<Recommendations>(`${this.apiUrl}/analitica/recomendaciones`,
+      { params: { soloCarrito } });
   }
 
   registrarCarrito(id: number): Observable<void> {
@@ -147,7 +150,7 @@ export class Pedidos360ApiService {
     return this.http.post<PedidoAceptado>(`${this.apiUrl}/pedidos`, request);
   }
 
-  crearCompra(items: NuevoPedido[], rechazoSimulado: boolean): Observable<PedidoAceptado[]> {
-    return this.http.post<PedidoAceptado[]>(`${this.apiUrl}/pedidos/lote`, { items, rechazoSimulado });
+  crearCompra(items: NuevoPedido[], tarjetaPrueba: string): Observable<PedidoAceptado[]> {
+    return this.http.post<PedidoAceptado[]>(`${this.apiUrl}/pedidos/lote`, { items, tarjetaPrueba });
   }
 }

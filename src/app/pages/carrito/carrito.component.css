@@ -154,7 +154,15 @@ label {
   font-weight: 700;
 }
 
-select {
+label small {
+  color: #536575;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+select,
+input {
   width: 100%;
   min-width: 0;
   border: 1px solid #cbd5dd;
