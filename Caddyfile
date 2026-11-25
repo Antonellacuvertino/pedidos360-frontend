@@ -6,9 +6,6 @@
 }
 
 rabbit.{$FRONTEND_DOMAIN} {
-    basic_auth {
-        pedidos360 {$ADMIN_PASSWORD_HASH}
-    }
     reverse_proxy {$RABBIT_ADMIN_URL}
 }
 
