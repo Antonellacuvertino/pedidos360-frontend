@@ -37,6 +37,7 @@ export class CarritoComponent implements OnInit {
   items: ItemCarrito[] = [];
   clientes: Cliente[] = [];
   error = '';
+  bloqueo: { hasta: Date | null } | null = null;
   mensaje = '';
   enviando = false;
   comprobante: ComprobantePedido | null = null;
@@ -118,6 +119,7 @@ export class CarritoComponent implements OnInit {
 
     this.enviando = true;
     this.error = '';
+    this.bloqueo = null;
     this.mensaje = '';
     this.comprobante = null;
 
@@ -139,11 +141,15 @@ export class CarritoComponent implements OnInit {
         this.enviando = false;
       },
       error: (error: HttpErrorResponse) => {
-        this.error = error.status === 429
-          ? 'Esta tarjeta de prueba quedó bloqueada por 30 minutos por intentos reiterados.'
-          : error.status === 402
+        if (error.status === 429) {
+          const retryAt = error.error?.bloqueadoHasta;
+          const hasta = typeof retryAt === 'string' ? new Date(retryAt) : null;
+          this.bloqueo = { hasta: hasta && Number.isFinite(hasta.getTime()) ? hasta : null };
+        } else {
+          this.error = error.status === 402
             ? 'La tarjeta de prueba fue rechazada. Puedes reintentar; tus productos siguen en el carrito.'
             : 'No pudimos confirmar el pago. Revisa tus pedidos antes de reintentar.';
+        }
         this.enviando = false;
       }
     });

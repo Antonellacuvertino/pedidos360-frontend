@@ -72,6 +72,12 @@
         </div>
 
         <p class="alert" *ngIf="error" role="alert">{{ error }}</p>
+        <div class="alert fraud-alert" *ngIf="bloqueo as aviso" role="alert">
+          <strong>Alerta de posible fraude</strong>
+          <span>Bloqueamos temporalmente esta tarjeta por intentos de pago repetidos. No se creó el pedido.</span>
+          <span *ngIf="aviso.hasta; else espera">Puedes reintentar a las {{ aviso.hasta | date:'HH:mm:ss' }}.</span>
+          <ng-template #espera><span>Espera 1 minuto antes de volver a intentarlo.</span></ng-template>
+        </div>
         <button type="submit" class="primary" [disabled]="form.invalid || enviando">
           <svg lucideShoppingCart size="18"></svg>
           {{ enviando ? 'Procesando pago' : 'Pagar pedido' }}

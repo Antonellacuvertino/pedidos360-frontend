@@ -26,9 +26,10 @@ tiempo acotado a analytics. Cuando llega el resultado de esa seleccion,
 Abrir un detalle por si solo no activa el bloque.
 
 El pago de prueba esta solo en **Carrito**. Ingresa `0000 0000 0000 0001`
-para una aprobacion o `0000 0000 0000 0002` para simular rechazos. El cuarto
-intento con el mismo numero ficticio dentro de 10 segundos bloquea esa tarjeta
-con 429. Un rechazo no vacia el carrito ni genera comprobante. No se aceptan
+para una aprobacion o `0000 0000 0000 0002` para simular rechazos. El tercer
+intento con el mismo numero ficticio dentro de 10 segundos bloquea la tarjeta
+durante 60 segundos y muestra una alerta con la hora de reintento.
+Un rechazo no vacia el carrito ni genera comprobante. No se aceptan
 tarjetas reales. **Analitica** muestra actividad y complementos
 con foto, nombre y precio; no tiene formulario de pago.
 
