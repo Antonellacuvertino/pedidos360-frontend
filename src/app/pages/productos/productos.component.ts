@@ -4,7 +4,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucidePackage, LucidePlus, LucideRefreshCw, LucideShoppingCart } from '@lucide/angular';
-import { catchError, EMPTY, exhaustMap, finalize, timer, timeout, TimeoutError } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, filter, finalize, retry, Subject, switchMap, take, throwError, timer, timeout, TimeoutError } from 'rxjs';
 import { CarritoService } from '../../services/carrito.service';
 import { environment } from '../../../environments/environment';
 import { NuevoProducto, Pedidos360ApiService, Producto } from '../../services/pedidos360-api.service';
@@ -28,8 +28,9 @@ export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
   readonly kafkaEnabled = environment.kafkaEnabled;
   detalle?: Producto;
-  sugeridos: Producto[] = [];
-  recomendacionError = '';
+  productoBase?: Producto;
+  private idsSugeridos: number[] = [];
+  private readonly seleccion = new Subject<Producto>();
   private readonly destroyRef = inject(DestroyRef);
   cargando = false;
   error = '';
@@ -51,43 +52,54 @@ export class ProductosComponent implements OnInit {
   ngOnInit(): void {
     this.cargarProductos();
     if (this.kafkaEnabled) {
-      timer(1500, 4000).pipe(
-        exhaustMap(() => this.api.recomendaciones().pipe(timeout(8000), catchError(() => {
-          this.recomendacionError = 'Recomendaciones no disponibles temporalmente.';
-          return EMPTY;
-        }))),
+      this.seleccion.pipe(
+        switchMap(producto => timer(400, 1000).pipe(
+          take(12),
+          exhaustMap(() => this.api.recomendaciones().pipe(timeout(5500), catchError(() => EMPTY))),
+          filter(result => result.productoBaseId === producto.id && this.productoBase === producto),
+          take(1)
+        )),
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(resultado => {
-        this.recomendacionError = '';
-        this.sugeridos = resultado.productoIds
-          .map(id => this.productos.find(producto => producto.id === id))
-          .filter((producto): producto is Producto => !!producto);
+        this.idsSugeridos = resultado.productoIds;
       });
     }
   }
 
+  get sugeridos(): Producto[] {
+    if (!this.productoBase) return [];
+    const carritoIds = new Set(this.carrito.obtenerItems().map(item => item.producto.id));
+    return this.idsSugeridos
+      .map(id => this.productos.find(producto => producto.id === id))
+      .filter((p): p is Producto => !!p && p.stock > 0 && !carritoIds.has(p.id))
+      .slice(0, 3);
+  }
+
   cargarProductos(): void {
+    if (this.cargando) return;
     this.cargando = true;
     this.error = '';
 
     this.api.listarProductos().pipe(
-      timeout(20000),
+      timeout(10000),
+      retry({ count: 1, delay: (error: unknown) => {
+        const transient = error instanceof TimeoutError || (error instanceof HttpErrorResponse &&
+          (error.status === 0 || error.status >= 500));
+        return transient ? timer(500) : throwError(() => error);
+      }}),
+      takeUntilDestroyed(this.destroyRef),
       finalize(() => this.cargando = false)
     ).subscribe({
       next: (productos) => {
         this.productos = productos;
       },
       error: (error: unknown) => {
-        if (error instanceof TimeoutError) {
-          this.error = 'El API Gateway no respondio en 20 segundos. Intenta actualizar nuevamente.';
-        } else if (error instanceof HttpErrorResponse && error.status === 401) {
-          this.error = 'La sesion expiro o el token fue rechazado (401). Cierra sesion e ingresa nuevamente.';
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          this.error = 'Vuelve a iniciar sesión para ver los productos.';
         } else if (error instanceof HttpErrorResponse && error.status === 403) {
-          this.error = 'Tu cuenta no tiene permiso para consultar productos (403).';
-        } else if (error instanceof HttpErrorResponse && error.status === 0) {
-          this.error = 'No hay conexion con el API Gateway. Comprueba que los servicios esten encendidos.';
+          this.error = 'Tu cuenta no tiene permiso para consultar productos.';
         } else {
-          this.error = 'No fue posible cargar productos desde el API Gateway.';
+          this.error = 'No pudimos mostrar los productos. Intenta nuevamente.';
         }
       }
     });
@@ -97,8 +109,15 @@ export class ProductosComponent implements OnInit {
     this.carrito.agregar(producto);
     this.mensaje = `${producto.nombre} agregado al carrito.`;
     if (this.kafkaEnabled) {
-      this.api.registrarCarrito(producto.id).pipe(timeout(8000), takeUntilDestroyed(this.destroyRef))
-        .subscribe({ error: () => this.recomendacionError = 'No se pudo registrar la seleccion para recomendaciones.' });
+      this.productoBase = producto;
+      this.idsSugeridos = [];
+      this.api.registrarCarrito(producto.id).pipe(
+        timeout(8000),
+        catchError(() => EMPTY),
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(() => {
+        if (this.productoBase === producto) this.seleccion.next(producto);
+      });
     }
   }
 

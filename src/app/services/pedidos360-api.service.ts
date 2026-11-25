@@ -81,6 +81,7 @@ export interface AnalyticsMetrics {
 export interface Recommendations {
   categoria: string | null;
   productoIds: number[];
+  productoBaseId: number | null;
 }
 
 export interface PagoSimulado {

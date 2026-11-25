@@ -18,6 +18,13 @@ contiene arquitectura, pruebas, paneles y guion de presentacion.
 
 ### Revision visual del catalogo
 
+El catalogo se carga al entrar. Se elimino el aviso tecnico de carga en
+Productos y Dashboard; si falla la consulta se muestra un error breve.
+Tras agregar al carrito, Angular publica la accion CARRITO y consulta por un
+tiempo acotado a analytics. Cuando llega el resultado de esa seleccion,
+**Para ti** aparece debajo del catalogo, sin productos que ya esten en el carrito.
+Abrir un detalle por si solo no activa el bloque.
+
 La recomendacion tiene su propia distribucion de dos columnas, distinta de la
 tarjeta del catalogo. Los nombres pueden ocupar varias lineas y, en pantallas
 angostas, el formulario pasa debajo del catalogo. No se altero el flujo Kafka.

@@ -1,11 +1,11 @@
-<main class="dashboard">
+<main class="dashboard" [attr.aria-busy]="cargando">
   <header class="page-header">
     <div>
       <span class="section-label">Pedidos360</span>
       <h1>Dashboard</h1>
-      <p>Resumen de pedidos, catalogo y clientes consumido desde el API Gateway.</p>
+      <p>Resumen de ventas y pedidos</p>
     </div>
-    <button type="button" class="ghost" (click)="cargarDatos()" title="Actualizar datos" aria-label="Actualizar datos">
+    <button type="button" class="ghost" [disabled]="cargando" (click)="cargarDatos()" title="Actualizar datos" aria-label="Actualizar datos">
       <svg lucideRefreshCw size="18"></svg>
     </button>
   </header>
@@ -34,7 +34,6 @@
   </section>
 
   <p class="alert" *ngIf="error">{{ error }}</p>
-  <p class="loading" *ngIf="cargando">Cargando informacion desde API Gateway...</p>
 
   <section class="content-grid">
     <div class="panel wide">

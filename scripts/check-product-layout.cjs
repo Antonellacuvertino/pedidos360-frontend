@@ -27,6 +27,7 @@ mkdirSync(output, { recursive: true });
         document.querySelectorAll('.product-info span').forEach(node => node.textContent = 'Perifericos');
         document.querySelectorAll('.product-info h2, .product-info h3').forEach(node => node.textContent = 'Monitor Samsung 27');
         document.querySelector('.recommendation-card .product-info p').textContent = '$189.990';
+        document.querySelector('.duo-caption').textContent = 'Completa tu selección de Notebook Lenovo ThinkPad';
         document.querySelector('.product-card .product-info p').textContent = 'Stock disponible: 18';
         document.querySelector('.product-actions strong').textContent = '$189.990';
         document.querySelectorAll('svg').forEach(node => {
@@ -37,6 +38,11 @@ mkdirSync(output, { recursive: true });
       });
       const check = async () => page.evaluate(() => {
         const errors = [];
+        const catalog = document.querySelector('.product-card');
+        const suggested = document.querySelector('.recommendations');
+        if (!(catalog.compareDocumentPosition(suggested) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+          errors.push('recommendations must follow the catalog');
+        }
         if (document.documentElement.scrollWidth > innerWidth + 1) errors.push('horizontal overflow');
         for (const card of document.querySelectorAll('.product-card, .recommendation-card')) {
           const cardRect = card.getBoundingClientRect();

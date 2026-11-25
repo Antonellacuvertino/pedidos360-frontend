@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize, forkJoin, timeout } from 'rxjs';
 import {
   LucideLayoutDashboard,
   LucidePackage,
@@ -38,6 +39,7 @@ export class DashboardComponent implements OnInit {
   pedidos: Pedido[] = [];
   cargando = false;
   error = '';
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private readonly api: Pedidos360ApiService) {}
 
@@ -46,6 +48,7 @@ export class DashboardComponent implements OnInit {
   }
 
   cargarDatos(): void {
+    if (this.cargando) return;
     this.cargando = true;
     this.error = '';
 
@@ -54,17 +57,15 @@ export class DashboardComponent implements OnInit {
       productos: this.api.listarProductos(),
       clientes: this.api.listarClientes(),
       pedidos: this.api.listarPedidos()
-    }).subscribe({
+    }).pipe(timeout(20000), finalize(() => this.cargando = false), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ({ resumen, productos, clientes, pedidos }) => {
         this.resumen = resumen;
         this.productos = productos;
         this.clientes = clientes;
         this.pedidos = pedidos;
-        this.cargando = false;
       },
       error: () => {
-        this.error = 'No fue posible cargar datos. Revisa el token, API Gateway o los servicios backend.';
-        this.cargando = false;
+        this.error = 'No pudimos actualizar el resumen. Intenta nuevamente.';
       }
     });
   }

@@ -60,7 +60,12 @@ h1 {
 .recommendations {
   display: grid;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.duo-caption {
+  color: #536575;
+  overflow-wrap: anywhere;
 }
 
 .recommendations > h2,

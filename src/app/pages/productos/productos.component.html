@@ -1,36 +1,21 @@
-<main class="productos-page">
+<main class="productos-page" [attr.aria-busy]="cargando">
   <header class="page-header">
     <div>
       <span class="section-label">Catalogo</span>
       <h1>Productos</h1>
-      <p>{{ productos.length }} productos</p>
+      <p *ngIf="productos.length">{{ productos.length }} productos</p>
     </div>
-    <button type="button" class="ghost refresh-button" (click)="cargarProductos()" title="Actualizar productos" aria-label="Actualizar productos">
+    <button type="button" class="ghost refresh-button" [disabled]="cargando" (click)="cargarProductos()" title="Actualizar productos" aria-label="Actualizar productos">
       <svg lucideRefreshCw size="18"></svg>
     </button>
   </header>
 
   <p class="alert" *ngIf="error">{{ error }}</p>
-  <p class="success" *ngIf="mensaje">{{ mensaje }}</p>
-  <p class="loading" *ngIf="cargando">Cargando productos...</p>
+  <p class="success" *ngIf="mensaje" role="status">{{ mensaje }}</p>
   <p class="loading" *ngIf="!cargando && !error && productos.length === 0">No hay productos disponibles.</p>
 
   <section class="grid">
     <div class="catalog">
-      <section class="recommendations" *ngIf="kafkaEnabled && sugeridos.length" aria-label="Recomendaciones">
-        <h2>Para ti</h2>
-        <article class="recommendation-card" *ngFor="let producto of sugeridos">
-          <div class="product-info">
-            <span>{{ producto.categoria }}</span>
-            <h3>{{ producto.nombre }}</h3>
-            <p>{{ producto.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }}</p>
-          </div>
-          <button type="button" class="primary" [disabled]="producto.stock <= 0" (click)="agregarAlCarrito(producto)" [attr.aria-label]="'Agregar ' + producto.nombre">
-            <svg lucideShoppingCart size="18"></svg> Agregar
-          </button>
-        </article>
-      </section>
-      <p *ngIf="kafkaEnabled && recomendacionError" role="status">{{ recomendacionError }}</p>
       <article class="product-card" *ngFor="let producto of productos">
         <div class="product-icon">
           <svg lucidePackage size="24"></svg>
@@ -55,6 +40,20 @@
         <h2>{{ detalle.nombre }}</h2>
         <p>{{ detalle.categoria }} - {{ detalle.stock }} disponibles</p>
         <strong>{{ detalle.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }}</strong>
+      </section>
+      <section class="recommendations" *ngIf="sugeridos.length" aria-labelledby="recommendation-title">
+        <h2 id="recommendation-title">Para ti</h2>
+        <p class="duo-caption">Completa tu selección de {{ productoBase?.nombre }}</p>
+        <article class="recommendation-card" *ngFor="let producto of sugeridos">
+          <div class="product-info">
+            <span>{{ producto.categoria }}</span>
+            <h3>{{ producto.nombre }}</h3>
+            <p>{{ producto.precio | currency: 'CLP':'symbol-narrow':'1.0-0' }}</p>
+          </div>
+          <button type="button" class="primary" (click)="agregarAlCarrito(producto)" [attr.aria-label]="'Agregar ' + producto.nombre">
+            <svg lucideShoppingCart size="18"></svg> Agregar
+          </button>
+        </article>
       </section>
     </div>
 
